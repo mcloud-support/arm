@@ -1,0 +1,195 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "serviceBusNamespaceName": {
+            "type": "String",
+            "defaultValue": "mcloud-service-bus",
+            "metadata": {
+                "description": "Name of the Service Bus namespace"
+            }
+        },
+        "skuTier": {
+            "type": "String",
+            "defaultValue": "Standard"
+        },
+        "zoneRedundant": {
+            "type": "Bool",
+            "defaultValue": false
+        },
+        "tags": {
+            "type": "Object",
+            "defaultValue": {
+                "sourceFrom": "mcloud-support",
+                "solution": "collect-alert-message"
+            }
+        },
+        "maxSizeInMegabytes": {
+            "type": "Int",
+            "defaultValue": 1024,
+            "allowedValues": [
+                1024,
+                2048,
+                3072,
+                4096,
+                5120
+            ]
+        },
+        "enableExpress": {
+            "type": "Bool",
+            "defaultValue": false
+        },
+        "requiresDuplicateDetection": {
+            "type": "Bool",
+            "defaultValue": true
+        },
+        "requiresSession": {
+            "type": "Bool",
+            "defaultValue": true
+        },
+        "deadLetteringOnMessageExpiration": {
+            "type": "Bool",
+            "defaultValue": true
+        },
+        "maxDeliveryCount": {
+            "type": "Int",
+            "defaultValue": 10,
+            "metadata": {
+                "description": "Number of maximum deliveries, value ranging from 1 to 2000."
+            }
+        },
+        "enablePartitioning": {
+            "type": "Bool",
+            "defaultValue": false
+        },
+        "omsWorkspaceName": {
+            "type": "string"
+        },
+        "omsWorkspaceResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
+        }
+    },
+    "variables": {
+        "defaultSASKeyName": "RootManageSharedAccessKey",
+        "SendOnlySASKeyName": "SendOnlySharedAccessKey",
+        "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('serviceBusNamespaceName'), variables('defaultSASKeyName'))]",
+        "authRuleResourceIdForSnedOnly": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('serviceBusNamespaceName'), variables('SendOnlySASKeyName'))]",
+        "sbVersion": "2017-04-01",
+        "omsWorkspaceResourceId": "[resourceId(subscription().subscriptionId, parameters('omsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.ServiceBus/namespaces",
+            "apiVersion": "2018-01-01-preview",
+            "name": "[parameters('serviceBusNamespaceName')]",
+            "location": "[resourceGroup().location]",
+            "tags": "[parameters('tags')]",
+            "sku": {
+                "name": "[parameters('skuTier')]",
+                "tier": "[parameters('skuTier')]"
+            },
+            "properties": {
+                "zoneRedundant": "[parameters('zoneRedundant')]"
+            },
+            "resources": [
+                {
+                    "type": "Queues",
+                    "apiVersion": "2017-04-01",
+                    "name": "azure-alert-queue",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+                    ],
+                    "properties": {
+                        "maxSizeInMegabytes": "[parameters('maxSizeInMegabytes')]",
+                        "maxDeliveryCount": "[parameters('maxDeliveryCount')]",
+                        "defaultMessageTimeToLive": "P14DT0H0M0S",
+                        "lockDuration": "PT5M",
+                        "duplicateDetectionHistoryTimeWindow": "PT10M",
+                        "autoDeleteOnIdle": "P14DT0H0M0S",
+                        "enableExpress": "[parameters('enableExpress')]",
+                        "requiresDuplicateDetection": "[parameters('requiresDuplicateDetection')]",
+                        "deadLetteringOnMessageExpiration": "[parameters('deadLetteringOnMessageExpiration')]",
+                        "enablePartitioning": "[parameters('enablePartitioning')]",
+                        "requiresSession": "[parameters('requiresSession')]"
+                    }
+                },
+                {
+                    "type": "Queues",
+                    "apiVersion": "2017-04-01",
+                    "name": "mon-alert-queue",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+                    ],
+                    "properties": {
+                        "maxSizeInMegabytes": "[parameters('maxSizeInMegabytes')]",
+                        "maxDeliveryCount": "[parameters('maxDeliveryCount')]",
+                        "defaultMessageTimeToLive": "P14DT0H0M0S",
+                        "lockDuration": "PT5M",
+                        "duplicateDetectionHistoryTimeWindow": "PT10M",
+                        "autoDeleteOnIdle": "P14DT0H0M0S",
+                        "enableExpress": "[parameters('enableExpress')]",
+                        "requiresDuplicateDetection": "[parameters('requiresDuplicateDetection')]",
+                        "deadLetteringOnMessageExpiration": "[parameters('deadLetteringOnMessageExpiration')]",
+                        "enablePartitioning": "[parameters('enablePartitioning')]",
+                        "requiresSession": "[parameters('requiresSession')]"
+                    }
+                },
+                {   
+                    "type": "AuthorizationRules",
+                    "apiVersion": "2017-04-01",
+                    "name": "[variables('SendOnlySASKeyName')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+                    ],
+                    "properties": {
+                        "rights": [
+                            "Send"
+                        ]
+                    }
+                },
+                {
+                    "type": "providers/diagnosticSettings",
+                    "apiVersion": "2016-09-01",
+                    "name": "Microsoft.insights/service",
+                    "dependsOn": [
+                        "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusNamespaceName'))]"
+                    ],
+                    "properties": {
+                        "workspaceId": "[variables('omsWorkspaceResourceId')]",
+                        "logs": [
+                            {
+                                "category": "OperationalLogs",
+                                "enabled": true
+                            }
+                        ],
+                        "metrics": [
+                            {
+                                "category": "AllMetrics",
+                                "enabled": true
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {
+        "NamespaceConnectionString": {
+            "type": "string",
+            "value": "[listkeys(variables('authRuleResourceId'), variables('sbVersion')).primaryConnectionString]"
+        },
+        "SharedAccessPolicyPrimaryKey": {
+            "type": "string",
+            "value": "[listkeys(variables('authRuleResourceId'), variables('sbVersion')).primaryKey]"
+        },
+        "SendOnlyNamespaceConnectionString": {
+            "type": "string",
+            "value": "[listkeys(variables('authRuleResourceIdForSnedOnly'), variables('sbVersion')).primaryConnectionString]"
+        },
+        "SendOnlySharedAccessPolicyPrimaryKey": {
+            "type": "string",
+            "value": "[listkeys(variables('authRuleResourceIdForSnedOnly'), variables('sbVersion')).primaryKey]"
+        }
+    }
+}

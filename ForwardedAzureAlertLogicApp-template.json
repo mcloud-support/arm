@@ -65,7 +65,10 @@
         },
         "tags": {
             "type": "object",
-            "defaultValue": {}
+            "defaultValue": {
+                "sourceFrom": "mcloud-support",
+                "solution": "collect-alert-message"
+            }
         }
     },
     "variables": {

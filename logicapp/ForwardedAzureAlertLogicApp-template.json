@@ -526,7 +526,7 @@
                                 "path": "[concat('/@{encodeURIComponent(', variables('singleQuote'), parameters('serviceBusQueueName'), variables('singleQuote'), ')}/messages')]"
                             },
                             "runAfter": {}
-                            
+
                         },
                         "Response": {
                             "inputs": {
@@ -596,5 +596,11 @@
                 }
             ]
         }
-    ]
+    ],
+    "outputs": {
+        "logicAppUrl": {
+            "type": "string",
+            "value": "[listCallbackURL(concat(resourceId('Microsoft.Logic/workflows/', parameters('logicAppName')), '/triggers/manual'), '2016-06-01').value]"
+        }
+    }
 }

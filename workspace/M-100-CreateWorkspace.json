@@ -6,7 +6,7 @@
             "type": "string",
             "defaultValue": "mcloud-monitor-workspace",
             "metadata": {
-                "description": "Name of the log analytics workspace."
+                "description": "Uniqe name for the log analytics workspace."
             }
         },
         "sku": {

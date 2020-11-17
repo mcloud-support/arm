@@ -4,9 +4,9 @@
     "parameters": {
         "serviceBusNamespaceName": {
             "type": "String",
-            "defaultValue": "mcloud-service-bus",
+            "defaultValue": "mcloud-central-service-bus",
             "metadata": {
-                "description": "Name of the Service Bus namespace"
+                "description": "Uniqe name for the Service Bus namespace"
             }
         },
         "skuTier": {
@@ -63,7 +63,8 @@
             "defaultValue": false
         },
         "omsWorkspaceName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "mcloud-monitor-workspace"
         },
         "omsWorkspaceResourceGroupName": {
             "type": "string",

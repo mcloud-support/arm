@@ -56,11 +56,11 @@
             "type": "int",
             "defaultValue": 0
         },
-        "omsWorkspaceName": {
+        "workspaceName": {
             "type": "string",
             "defaultValue": "mcloud-monitor-workspace"
         },
-        "omsWorkspaceResourceGroupName": {
+        "workspaceResourceGroupName": {
             "type": "string",
             "defaultValue": "[resourceGroup().name]"
         },
@@ -101,7 +101,7 @@
         }
     },
     "variables": {
-        "omsWorkspaceResourceId": "[resourceId(subscription().subscriptionId, parameters('omsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
+        "vWorkspaceResourceId": "[resourceId(subscription().subscriptionId, parameters('workspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]",
         "singleQuote": "'",
         "subscriptionId": "[subscription().subscriptionId]"
     },
@@ -594,7 +594,7 @@
                     "properties": {
                         // "storageAccountId": null,
                         // "serviceBusRuleId": null,
-                        "workspaceId": "[variables('omsWorkspaceResourceId')]",
+                        "workspaceId": "[variables('vWorkspaceResourceId')]",
                         // "eventHubAuthorizationRuleId": null,
                         // "eventHubName": null,
                         "metrics": [
@@ -641,7 +641,7 @@
                 "logicAppReceivers": [
                     {
                         "name": "[parameters('logicAppName')]",
-                        "resourceId": "[resourceId(subscription().subscriptionId, parameters('omsWorkspaceResourceGroupName'), 'Microsoft.Logic/workflows', parameters('logicAppName'))]",
+                        "resourceId": "[resourceId(subscription().subscriptionId, parameters('workspaceResourceGroupName'), 'Microsoft.Logic/workflows', parameters('logicAppName'))]",
                         "callbackUrl": "[listCallbackURL(concat(resourceId('Microsoft.Logic/workflows/', parameters('logicAppName')), '/triggers/manual'), '2016-06-01').value]",
                         "useCommonAlertSchema": true
                     }
@@ -869,7 +869,7 @@
                     "properties": {
                         // "storageAccountId": null,
                         // "serviceBusRuleId": null,
-                        "workspaceId": "[variables('omsWorkspaceResourceId')]",
+                        "workspaceId": "[variables('vWorkspaceResourceId')]",
                         // "eventHubAuthorizationRuleId": null,
                         // "eventHubName": null,
                         "metrics": [

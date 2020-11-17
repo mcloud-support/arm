@@ -8,12 +8,20 @@
                 "description": "Name of the diagnostic setting."
             }
         },
-        "workspaceId": {
-          "type": "String",
+        "workspaceName": {
+            "type": "string",
+            "defaultValue": "mcloud-monitor-workspace",
             "metadata": {
-                "description": "Specifies the workspace FQDN."
+                "description": "Uniqe name for the log analytics workspace."
             }
+        },
+        "resourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
         }
+    },
+    "variables": {
+        "vWorkspaceResourceId": "[resourceId(subscription().subscriptionId, parameters('resourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]"
     },
     "resources": [
         {
@@ -21,7 +29,7 @@
             "apiVersion": "2017-05-01-preview",
             "name": "[parameters('settingName')]",
             "properties": {
-                "workspaceId": "[parameters('workspaceId')]",
+                "workspaceId": "[variables('vWorkspaceResourceId')]",
                 "logs": [
                     {
                         "category": "Administrative",

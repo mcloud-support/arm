@@ -11,7 +11,12 @@
         },
         "skuTier": {
             "type": "String",
-            "defaultValue": "Standard"
+            "defaultValue": "Standard",
+            "allowedValues": [
+                "Basic",
+                "Standard",
+                "Premium"
+            ]
         },
         "zoneRedundant": {
             "type": "Bool",

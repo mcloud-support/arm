@@ -11,7 +11,7 @@
 1. 登入 VM 調整 OmsAgent 代理程式組態檔案，可參考[官方文件](https://github.com/microsoft/OMS-Agent-for-Linux/blob/master/docs/Apache-HTTP-Server-Logs-Collection.md)說明
 2. 本處 Apache 紀錄檔的位置，須依照實際案場來修改想要收集的 Log Files Path，以下是說明：
    1. 先備妥 workspace ID
-      > 前述執行 [ >> M-100-CreateWorkspace << ](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Fworkspace%2FM-100-CreateWorkspace.json) 後所產生的 workspace ID，登入 Azure Portal > Log Analytics workspaces > 「預設名稱為：mcloud-monitor-workspace」 > Overview 可查閱
+      > 前述執行「設定用戶端自動收集監控資源、服務、與應用程式紀錄 [由此處進入](https://github.com/mcloud-support/arm/tree/main/workspace/README.md)」後所產生的 workspace ID，登入 Azure Portal > Log Analytics workspaces > 「預設名稱為：mcloud-monitor-workspace」 > Overview 可查閱
    2.	登入已安裝 Apache 應用程式的 Virtual Machine
    3.	查看下列路徑是否存在代理程式組態檔案「apache_logs.conf」，若無，則複製 /etc/opt/microsoft/omsagent/<workspace id>/conf/omsagent.d/apache_logs.conf 
    4.	複製 apache_logs.conf 到下列位置
@@ -52,12 +52,12 @@
 ## 建立 Apache 應用程式監控告警
 1. 建立監控  Apache Linux VM 根磁碟或掛載磁碟的剩餘空間告警為例：
    * 執行先決條件是 VM 已經存在。
-   * 點擊此處執行 ARM [ >> M-VM-01-FreeDiskSpace << ](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2FM-VM-01-FreeDiskSpace.json) 自動部署下列資源：
+   * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2FM-VM-01-FreeDiskSpace.json) 自動部署下列資源：
      * 建立 「Insufficient Disk Space」 alert rule
      * 配置告警觸發時傳送訊息到指定的 ActionGroup
 2. 建立監控 Linux VM 根磁碟或掛載磁碟的剩餘空間告警為例：
    * 執行先決條件是 VM 已經存在。
-   * 點擊此處執行 ARM [ >> M-VM-01-FreeDiskSpace << ](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2FM-VM-01-FreeDiskSpace.json) 自動部署下列資源：
+   * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2FM-VM-01-FreeDiskSpace.json) 自動部署下列資源：
      * 建立 「Insufficient Disk Space」 alert rule
      * 配置告警觸發時傳送訊息到指定的 ActionGroup
 

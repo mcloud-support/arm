@@ -2,68 +2,26 @@
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "settingName": {
-          "type": "String",
-            "metadata": {
-                "description": "Name of the diagnostic setting."
-            }
-        },
-        "workspaceName": {
+        "logAnalyticsWorkspaceId": {
             "type": "string",
-            "defaultValue": "mcloud-monitor-workspace",
             "metadata": {
-                "description": "Uniqe name for the log analytics workspace."
-            }
-        },
-        "resourceGroupName": {
-            "type": "string"
-        },
-        "location": {
-            "type": "string",
-            "allowedValues": [
-                "australiacentral",
-                "australiaeast",
-                "australiasoutheast",
-                "brazilsouth",
-                "canadacentral",
-                "centralindia",
-                "centralus",
-                "eastasia",
-                "eastus",
-                "eastus2",
-                "francecentral",
-                "japaneast",
-                "koreacentral",
-                "northcentralus",
-                "northeurope",
-                "southafricanorth",
-                "southcentralus",
-                "southeastasia",
-                "switzerlandnorth",
-                "switzerlandwest",
-                "uksouth",
-                "ukwest",
-                "westcentralus",
-                "westeurope",
-                "westus",
-                "westus2"
-            ],
-            "metadata": {
-                "description": "Specifies the location for the workspace."
+                "description": "The resource id of the log analytics workspace."
             }
         }
     },
     "variables": {
-        "vWorkspaceResourceId": "[resourceId(subscription().subscriptionId, parameters('resourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]"
+        "apiVersions": {
+            "diagnosticSettings": "2017-05-01-preview"
+        }
     },
     "resources": [
         {
             "type": "Microsoft.Insights/diagnosticSettings",
-            "apiVersion": "2017-05-01-preview",
-            "name": "[parameters('settingName')]",
-            "location": "[parameters('location')]",
+            "apiVersion": "[variables('apiVersions').diagnosticSettings]",
+            "name": "subscriptionLogsToLogAnalytics",
+            "location": "Global",
             "properties": {
-                "workspaceId": "[variables('vWorkspaceResourceId')]",
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
                 "logs": [
                     {
                         "category": "Administrative",

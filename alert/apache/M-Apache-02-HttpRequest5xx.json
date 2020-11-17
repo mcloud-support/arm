@@ -1,0 +1,141 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertRuleName": {
+            "type": "string",
+            "defaultValue": "Http 5xx Bad Request Anomaly",
+            "metadata": {
+                "description": "Name of the alert rule."
+            }
+        },
+        "alertRuleDescription": {
+            "type": "string",
+            "defaultValue": "An anomaly HTTP 5xx bad request alert.",
+            "metadata": {
+                "description": "Description of the alert rule."
+            }
+        },
+        "workspaceName": {
+            "type": "string",
+            "defaultValue": "mcloud-monitor-workspace",
+            "metadata": {
+                "description": "Name of the log analytics workspace."
+            }
+        },
+        "resourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "allowedValues": [
+                "australiacentral",
+                "australiaeast",
+                "australiasoutheast",
+                "brazilsouth",
+                "canadacentral",
+                "centralindia",
+                "centralus",
+                "eastasia",
+                "eastus",
+                "eastus2",
+                "francecentral",
+                "japaneast",
+                "koreacentral",
+                "northcentralus",
+                "northeurope",
+                "southafricanorth",
+                "southcentralus",
+                "southeastasia",
+                "switzerlandnorth",
+                "switzerlandwest",
+                "uksouth",
+                "ukwest",
+                "westcentralus",
+                "westeurope",
+                "westus",
+                "westus2"
+            ],
+            "metadata": {
+                "description": "Location for the alert. Must be the same location as the workspace."
+            }
+        },
+        "actionGroupName": {
+            "type": "string",
+            "defaultValue": "ForwardToMCB-ActionGroup",
+            "metadata": {
+                "description": "The name of the action group that is triggered when the alert is activated."
+            }
+        },
+        "tags": {
+            "type": "object",
+            "defaultValue": {
+                "sourceFrom": "mcloud-support",
+                "solution": "collect-alert-message"
+            }
+        },
+        "suppressAlertsInMinutes": {
+            "type": "int",
+            "defaultValue": 15,
+            "metadata": {
+                "description": "Set an amount of time to wait before alerting again."
+            }
+        },
+        "greaterThanSampleCount": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata": {
+                "description": "Set a bad request count to fire alert."
+            }
+        }
+
+    },
+    "variables": {
+        "vWorkspaceResourceId": "[resourceId(subscription().subscriptionId, parameters('resourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]",
+        "vActionGroupResourceId": "[resourceId(subscription().subscriptionId, parameters('resourceGroupName'), 'Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+    },
+    "resources":[ 
+        {
+            "type":"Microsoft.Insights/scheduledQueryRules",
+            "name": "[parameters('alertRuleName')]",
+            "apiVersion": "2018-04-16",
+            "location": "[parameters('location')]",
+            "tags": "[parameters('tags')]",
+            "properties":{
+                "description": "[concat('[INFO', parameters('alertRuleDescription'))]",
+                "enabled": "true",
+                "source": {
+                    "query": "ApacheAccess_CL | where (code_d >= 500 and code_d < 600) | summarize AggregatedValue = count() by bin(TimeGenerated, 5m), Http_Request_Status = code_d, Computer",
+                    "dataSourceId": "[variables('vWorkspaceResourceId')]",
+                    "queryType":"ResultCount"
+                },
+                "schedule":{
+                    "frequencyInMinutes": 5,
+                    "timeWindowInMinutes": 15
+                },
+                "action":{
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "2",
+                    "throttlingInMin": "[parameters('suppressAlertsInMinutes')]",
+                    "aznsAction":{
+                        "actionGroup": "[array(variables('vActionGroupResourceId'))]",
+                        "emailSubject": "[concat('[CRITICAL] ', parameters('alertRuleDescription'))]",
+                        "customWebhookPayload":"{ \"alertname\":\"#alertrulename\", \"IncludeSearchResults\":true }"
+                    },
+                    "trigger":{
+                        "thresholdOperator": "GreaterThan",
+                        "threshold": "[parameters('greaterThanSampleCount')]",
+                        "metricTrigger": {
+                            "thresholdOperator": "GreaterThan",
+                            "threshold": 1,
+                            "metricTriggerType": "Consecutive",
+                            "metricColumn": "Http_Request_Status"
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

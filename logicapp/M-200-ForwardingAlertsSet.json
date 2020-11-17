@@ -4,29 +4,29 @@
     "parameters": {
         "logicAppName": {
             "type": "string",
-            "defaultValue": "ForwardedAzureAlertToServiceBus-faatsb",
+            "defaultValue": "MCB-AzureAlertToServiceBus",
             "metadata": {
-                "description": "The name for the logic app."
+                "description": "The name for the Azure alert forwarded logic app."
             }
         },
         "serviceBusConnectionString": {
             "type": "securestring",
             "metadata": {
-                "description": "The Azure Service Bus namespace connection string."
+                "description": "The MCB Service Bus namespace send only connection string."
             }
         },
         "serviceBusConnectionName": {
             "type": "string",
-            "defaultValue": "conn-mcloud-service-bus-faatsb",
+            "defaultValue": "MCB-ServiceBusConnection",
             "metadata": {
-                "description": "The name for the Service Bus connection."
+                "description": "The name for the MCB service bus connection."
             }
         },
         "serviceBusQueueName": {
             "type": "string",
             "defaultValue": "azure-alert-queue",
             "metadata": {
-                "description": "The name of the queue to add a message to."
+                "description": "The name of the queue to add a azure alert message to."
             }
         },
         "location": {
@@ -57,7 +57,8 @@
             "defaultValue": 0
         },
         "omsWorkspaceName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "mcloud-monitor-workspace"
         },
         "omsWorkspaceResourceGroupName": {
             "type": "string",
@@ -69,11 +70,40 @@
                 "sourceFrom": "mcloud-support",
                 "solution": "collect-alert-message"
             }
+        },
+        "actionGroupName": {
+            "type": "string",
+            "defaultValue": "ForwardToMCB-ActionGroup",
+            "metadata": {
+                "description": "Unique name within the resource group for the Action group."
+            }
+        },
+        "actionGroupShortName": {
+            "type": "string",
+            "defaultValue": "ForwardToMCB",
+            "metadata": {
+                "description": "Short name up to 12 characters for the Action group."
+            }
+        },
+        "receivedLogicAppName": {
+            "type": "string",
+            "defaultValue": "MCB-RoutedIntoServiceBus",
+            "metadata": {
+                "description": "The name for the received mcloud monitor message logic app."
+            }
+        },
+        "receivedServiceBusQueueName": {
+            "type": "string",
+            "defaultValue": "mon-alert-queue",
+            "metadata": {
+                "description": "The name of the queue to add a mcloud monitor message to."
+            }
         }
     },
     "variables": {
         "omsWorkspaceResourceId": "[resourceId(subscription().subscriptionId, parameters('omsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
-        "singleQuote": "'"
+        "singleQuote": "'",
+        "subscriptionId": "[subscription().subscriptionId]"
     },
     "resources": [
         {
@@ -595,12 +625,291 @@
                     ]
                 }
             ]
+        },
+        {
+            "type": "Microsoft.Insights/actionGroups",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('actionGroupName')]",
+            "location": "global",
+            "tags": "[parameters('tags')]",
+            "dependsOn": [
+                "[concat('Microsoft.Logic/workflows/', parameters('logicAppName'))]"
+            ],
+            "properties": {
+                "groupShortName": "[parameters('actionGroupShortName')]",
+                "enabled": true,
+                "logicAppReceivers": [
+                    {
+                        "name": "[parameters('logicAppName')]",
+                        "resourceId": "[resourceId(subscription().subscriptionId, parameters('omsWorkspaceResourceGroupName'), 'Microsoft.Logic/workflows', parameters('logicAppName'))]",
+                        "callbackUrl": "[listCallbackURL(concat(resourceId('Microsoft.Logic/workflows/', parameters('logicAppName')), '/triggers/manual'), '2016-06-01').value]",
+                        "useCommonAlertSchema": true
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2019-05-01",
+            "name": "[parameters('receivedLogicAppName')]",
+            "location": "[parameters('location')]",
+            "tags": "[parameters('tags')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', parameters('serviceBusConnectionName'))]"
+            ],
+            "properties": {
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        },
+                        "subscriptionId": {
+                            "defaultValue": "YOUR-SUBSCRIPTION-ID",
+                            "type": "String"
+                        }
+                    },
+                    "triggers": {
+                        "manual": {
+                            "inputs": {
+                                "schema": {
+                                    "properties": {
+                                        "dashboardId": {
+                                            "type": "integer"
+                                        },
+                                        "evalMatches": {
+                                            "items": {
+                                                "properties": {
+                                                    "metric": {
+                                                        "type": "string"
+                                                    },
+                                                    "tags": {
+                                                        "properties": {},
+                                                        "type": "object"
+                                                    },
+                                                    "value": {
+                                                        "type": "integer"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "value",
+                                                    "metric",
+                                                    "tags"
+                                                ],
+                                                "type": "object"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "imageUrl": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "orgId": {
+                                            "type": "integer"
+                                        },
+                                        "panelId": {
+                                            "type": "integer"
+                                        },
+                                        "ruleId": {
+                                            "type": "integer"
+                                        },
+                                        "ruleName": {
+                                            "type": "string"
+                                        },
+                                        "ruleUrl": {
+                                            "type": "string"
+                                        },
+                                        "state": {
+                                            "type": "string"
+                                        },
+                                        "tags": {
+                                            "properties": {},
+                                            "type": "object"
+                                        },
+                                        "title": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "kind": "Http",
+                            "type": "Request"
+                        }
+                    },
+                    "actions": {
+                        "Parse_JSON": {
+                            "inputs": {
+                                "content": "@triggerBody()",
+                                "schema": {
+                                    "properties": {
+                                        "dashboardId": {
+                                            "type": "integer"
+                                        },
+                                        "evalMatches": {
+                                            "items": {
+                                                "properties": {
+                                                    "metric": {
+                                                        "type": "string"
+                                                    },
+                                                    "tags": {
+                                                        "properties": {},
+                                                        "type": "object"
+                                                    },
+                                                    "value": {
+                                                        "type": "number"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "value",
+                                                    "metric",
+                                                    "tags"
+                                                ],
+                                                "type": "object"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "orgId": {
+                                            "type": "integer"
+                                        },
+                                        "panelId": {
+                                            "type": "integer"
+                                        },
+                                        "ruleId": {
+                                            "type": "integer"
+                                        },
+                                        "ruleName": {
+                                            "type": "string"
+                                        },
+                                        "ruleUrl": {
+                                            "type": "string"
+                                        },
+                                        "state": {
+                                            "type": "string"
+                                        },
+                                        "tags": {
+                                            "properties": {},
+                                            "type": "object"
+                                        },
+                                        "title": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "runAfter": {},
+                            "type": "ParseJson"
+                        },
+                        "Send_message": {
+                            "inputs": {
+                                "body": {
+                                    "ContentData": "@{base64(concat('{','\n','\"subscriptionId\": \"',parameters('subscriptionId'),'\",','\n','\"alertContext\":','\n',body('Parse_JSON'),'\n','}'))}",
+                                    "ContentType": "application/json",
+                                    "SessionId": "@{utcNow()}"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['servicebus']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "[concat('/@{encodeURIComponent(', variables('singleQuote'), parameters('receivedServiceBusQueueName'), variables('singleQuote'), ')}/messages')]"
+                            },
+                            "runAfter": {
+                                "Parse_JSON": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection"
+                        },
+                        "Response_2": {
+                            "inputs": {
+                                "body": "Done",
+                                "statusCode": 200
+                            },
+                            "kind": "Http",
+                            "runAfter": {
+                                "Send_message": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Response"
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "servicebus": {
+                                "id": "[subscriptionResourceId('Microsoft.Web/locations/managedApis', parameters('location'), 'servicebus')]",
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('serviceBusConnectionName'))]"
+                            }
+                        }
+                    },
+                    "subscriptionId": {
+                        "value": "[variables('subscriptionId')]"
+                    }
+                },
+                "state": "[parameters('logicAppState')]"
+            },
+            "resources": [
+                {
+                    "apiVersion": "2016-09-01",
+                    "type": "providers/diagnosticSettings",
+                    "name": "microsoft.insights/service",
+                    "properties": {
+                        // "storageAccountId": null,
+                        // "serviceBusRuleId": null,
+                        "workspaceId": "[variables('omsWorkspaceResourceId')]",
+                        // "eventHubAuthorizationRuleId": null,
+                        // "eventHubName": null,
+                        "metrics": [
+                            {
+                                "timeGrain": "AllMetrics",
+                                "category": "AllMetrics",
+                                "enabled": "[parameters('logsEnabled')]",
+                                "retentionPolicy": {
+                                    "enabled": "[parameters('retentionPolicyEnabled')]",
+                                    "days": "[parameters('retentionDays')]"
+                                }
+                            }
+                        ],
+                        "logs": [
+                            {
+                                "category": "WorkflowRuntime",
+                                "enabled": "[parameters('logsEnabled')]",
+                                "retentionPolicy": {
+                                    "enabled": "[parameters('retentionPolicyEnabled')]",
+                                    "days": "[parameters('retentionDays')]"
+                                }
+                            }
+                        ]
+                    },
+                    "identity": null,
+                    "dependsOn": [
+                        "[concat('Microsoft.Logic/workflows/', parameters('receivedLogicAppName'))]"
+                    ]
+                }
+            ]
         }
     ],
     "outputs": {
+        "actionGroupId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Insights/actionGroups',parameters('actionGroupName'))]"
+        },
         "logicAppUrl": {
             "type": "string",
-            "value": "[listCallbackURL(concat(resourceId('Microsoft.Logic/workflows/', parameters('logicAppName')), '/triggers/manual'), '2016-06-01').value]"
+            "value": "[listCallbackURL(concat(resourceId('Microsoft.Logic/workflows/', parameters('receivedLogicAppName')), '/triggers/manual'), '2016-06-01').value]"
         }
     }
 }

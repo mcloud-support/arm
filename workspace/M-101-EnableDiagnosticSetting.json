@@ -16,12 +16,10 @@
             }
         },
         "resourceGroupName": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().name]"
+            "type": "string"
         },
         "location": {
             "type": "string",
-            "defaultValue": "[resourceGroup().location]",
             "allowedValues": [
                 "australiacentral",
                 "australiaeast",

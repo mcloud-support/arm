@@ -5,7 +5,7 @@
         "logAnalyticsWorkspaceId": {
             "type": "string",
             "metadata": {
-                "description": "The resource id of the log analytics workspace."
+                "description": "The FQDN resource id of the log analytics workspace."
             }
         }
     },

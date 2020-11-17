@@ -53,6 +53,7 @@
             "metadata": {
                 "description": "Specifies the location for the workspace."
             }
+        }
     },
     "variables": {
         "vWorkspaceResourceId": "[resourceId(subscription().subscriptionId, parameters('resourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]"

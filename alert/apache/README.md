@@ -50,14 +50,11 @@
 <div align=center><img src="https://github.com/microsoft/OMS-Agent-for-Linux/raw/master/docs/pictures/ApacheHTTPServerSearchView.PNG?raw=true"></div>
 
 ## 建立 Apache 應用程式監控告警
-1. 建立監控  Apache Linux VM 根磁碟或掛載磁碟的剩餘空間告警為例：
-   * 執行先決條件是 VM 已經存在。
-   * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2FM-VM-01-FreeDiskSpace.json) 自動部署下列資源：
-     * 建立 「Insufficient Disk Space」 alert rule
+1. 建立監控 Apache HTTP Request Status 4xx Count 一般告警為例：
+   * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2Fapache%2FM-Apache-01-HttpRequest4xx.json) 自動部署下列資源：
+     * 建立 「HTTP Request Status 4xx Count」 alert rule
      * 配置告警觸發時傳送訊息到指定的 ActionGroup
-2. 建立監控 Linux VM 根磁碟或掛載磁碟的剩餘空間告警為例：
-   * 執行先決條件是 VM 已經存在。
-   * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2FM-VM-01-FreeDiskSpace.json) 自動部署下列資源：
-     * 建立 「Insufficient Disk Space」 alert rule
+2. 建立監控 Apache HTTP Request Status 5xx Count 嚴重告警為例：
+   * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2Fapache%2FM-Apache-01-HttpRequest5xx.json) 自動部署下列資源：
+     * 建立 「HTTP Request Status 5xx Count」 alert rule
      * 配置告警觸發時傳送訊息到指定的 ActionGroup
-

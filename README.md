@@ -1,6 +1,7 @@
 # 快速進入
 ## 設定用戶端自動收集監控資源、服務、與應用程式紀錄 [由此處進入](https://github.com/mcloud-support/arm/tree/main/workspace/README.md)
-## 設定用戶端 Alert 自動監控告警 [由此處進入](https://github.com/mcloud-support/arm/tree/main/alert/README.md)
+## 啟用監控偵測功能與 Alert 告警 [由此處進入](https://github.com/mcloud-support/arm/tree/main/alert/README.md)
+
 ---
 ## Azure 監控服務基本認識
 > 關於此處會使用到 Azure Monitor 服務的特性與專有名詞，這些基礎認知不是本處要說明的內容，您可以參考官方文件 [Azure Monitor Overview](https://docs.microsoft.com/zh-tw/azure/azure-monitor/overview) 來對照本文件的名詞。如圖所示

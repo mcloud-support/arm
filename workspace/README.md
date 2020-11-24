@@ -16,13 +16,12 @@
    * 建立 MCB-ServiceBusConnection 連接 MCB 訊息服務中心。
    * 建立 MCB-AzureAlertToServiceBus Logic App 並啟動診斷監控，轉發 Azure Alert 到 MCB 訊息服務中心。
    * 產生 ForwardToMCB-ActionGroup 讓 Azure Alert 設定驅動轉發。
-   * 建立 MCB-RoutedIntoServiceBus Logic App 並啟動診斷監控，回傳 MCB-RoutedIntoServiceBus Web hook Credentials String 與 ActionGroup 資訊。
-6. 後續自訂 Azure Alert 設定時，可指名加入此 ForwardToMCB-ActionGroup為通知對象，即可整合傳送訊息到 MCB Portal 事件中心
-7. 啟用各式資源、服務、或應用程式監控偵測功能
-   1. 以 VM 為例，VM建立完成，使用 ExistingVmOnboardingTemplate.json 納管指定的 VM 啟用 Agent 監控，可執行Alert腳本
-   2. 以 SQL Service為例，使用 EnableSQLDiagnosticSetting-template.json 納管指定的資料庫，啟用 Agent 監控
+   * 建立 MCB-RoutedIntoServiceBus Logic App 並啟動診斷監控
+   * <font color=red size=3><b>重要回傳資訊，用於後續設定</b></font>
+     * <font color=yellow size=3>MCB-RoutedIntoServiceBus</font>: 整合 MCB Portal 監控服務通知功能時，所使用的 Web hook Credentials String
+     * <font color=yellow size=3>ForwardToMCB-ActionGroup</font>: 整合自訂 Azure Alert 設定時，可指名加入此 ForwardToMCB-ActionGroup 為通知對象，即可整合傳送訊息到 MCB Portal 事件中心
 
-## 登入 MCB Portal，設定 Monitor 服務
-1. MCB Monitor platform 上新增 Alert Notificaiton Channels，設定Web Hook 填入回傳 MCB-RoutedIntoServiceBus Web hook Credentials String，即可整合傳送訊息到 MCB Portal
+## [僅供MSP維運人員] 登入 MCB Portal，設定 Monitor 服務 [由此處進入](https://github.com/mcloud-support/arm/tree/main/workspace/SETUP.md) 
+1. 上一節 <font color=yellow size=3>MCB-RoutedIntoServiceBus</font> Web hook Credentials String 請保存備用
 
 

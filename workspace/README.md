@@ -18,10 +18,8 @@
    * 產生 ForwardToMCB-ActionGroup 讓 Azure Alert 設定驅動轉發。
    * 建立 MCB-RoutedIntoServiceBus Logic App 並啟動診斷監控
    * <font color=red size=3><b>重要回傳資訊，用於後續設定</b></font>
-     * <font color=yellow size=3>MCB-RoutedIntoServiceBus</font>: 整合 MCB Portal 監控服務通知功能時，所使用的 Web hook Credentials String
      * <font color=yellow size=3>ForwardToMCB-ActionGroup</font>: 整合自訂 Azure Alert 設定時，可指名加入此 ForwardToMCB-ActionGroup 為通知對象，即可整合傳送訊息到 MCB Portal 事件中心
+     * <font color=yellow size=3>logicAppUrl</font>: 整合 MCB Portal 監控服務通知功能時，所使用的 Azure Logic App 「MCB-RoutedIntoServiceBus」Web hook URL
 
 ## [僅供MSP維運人員] 登入 MCB Portal，設定 Monitor 服務 [由此處進入](https://github.com/mcloud-support/arm/tree/main/workspace/SETUP.md) 
-1. 上一節 <font color=yellow size=3>MCB-RoutedIntoServiceBus</font> Web hook Credentials String 請保存備用
-
-
+1. 上一節 <font color=yellow size=3>logicAppUrl</font>: 整合 MCB Portal 監控服務通知功能時，所使用的 Azure Logic App 「MCB-RoutedIntoServiceBus」Web hook URL 請保存備用

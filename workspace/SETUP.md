@@ -116,4 +116,10 @@
 - Azure Network Policy Dashboard based on Azure Monitor: 13102
 
 ## 3.(Option) 設定 MCB Monitor Alert轉發功能
-- MCB Monitor platform 上新增 Alert Notificaiton Channels，設定Web Hook 填入回傳 MCB-RoutedIntoServiceBus Web hook Credentials String，即可整合傳送訊息到 MCB Portal
+- 點選 MCB Monitor Portal 左側 Alerting > Notification Channels
+- Add Channel
+- Name: 任意名稱
+- Type 選擇 webhook
+- Url 填入前述在用戶端執行部署所回傳的 <font color=yellow size=3>logicAppUrl</font>
+- Notification settings 資訊處，可選擇勾選 Default, Include image, Send reminders
+- Save

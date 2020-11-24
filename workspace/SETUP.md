@@ -36,44 +36,24 @@
   - 選取持續時間 : Never
   - 選取 [新增] 
   - <font color=yellow size=3>記錄 Client secrets 產生的 Value (非ID)</font> 稍後需用於 MCB 用戶端監視服務功能設定 - <font color=yellow size=3>此值在您離開此頁面後就「不會再次顯示」，若忘記，僅能重新產生</font>
-
-## 5. Expose an API (尚無法確定是否一定需要此步驟)
-- 回到 [Azure Active Directory] 
-- 在 [管理]下選取 [應用程式註冊]，在應用程式註冊 中，選取上述應用程式 mon-mcloud-cht-com-tw
-- 選取 Expose an API
-- 新增 scope
-- Save and Continue
-- Scope name : mcb-monitor-readonly
-- Who can consent : Admins and users
-- Admin consent display name : mcb-monitor-readonly
-- Admin conset description : mcb-monitor-readonly
-- 新增 scope
-
-## 6. 指派角色給 MCB Monitor 應用程式
+## 5. 指派角色給 MCB Monitor 應用程式
 - 選擇 Subscriptions 功能管理頁面
 - 選擇 Access control (IAM).
 - 右側功能選擇 Add role assignment.
 - Role 選擇 Contributor
 - Select 輸入 mon-mcloud-cht-com-tw，點選出現的 member mon-mcloud-cht-com-tw 後儲存
 
-## 7. 設定 MCB Monitor 應用程式存取的資源與功能
+## 6. 設定 MCB Monitor 應用程式存取的資源與功能
 - 回到 [Azure Active Directory] 
 - 在 [管理]下選取 [應用程式註冊]，在應用程式註冊 中，選取上述應用程式 mon-mcloud-cht-com-tw
 - 選取左列管理的 API permissions
-- (test)
-- 新增一個 permission 選 My APIs.
-- 選擇 mon-mcloud-cht-com-tw : Delegated permissions
-- 選 APIs my organization uses
-- , mcb-monitor-readonly, Read monitor relations as user
-- 
 - 新增一個 permission 選 APIs my organization uses
 - 選擇下方 Log Analytics API 點擊進入設定
 - 選擇 Delegated permissions
   - 勾選 Data.Read / Read Log Analytics data as user
 - Add permissions 完成該項權限設定
-- 依照上列方法，完成下列權限設定
-  - Log Analytics API : Delegated permissions, Data.Read / Read Log Analytics data as user
-  - 
+- 依照上列方法，可自行增加其他監控完權限設定，例如 Azure Stroage
+
 # 以維運人員身分登入 MCB Monitor Portal 
 ## 1.設定 MCB Monitor 應用程式服務端資料來源
 - 請先向 MCB Poratl Admin 確定您擁有管理 MCB Monitor Portal 的 Admin 權限

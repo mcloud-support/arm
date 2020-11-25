@@ -4,9 +4,9 @@
     "parameters": {
         "workspaceName": {
             "type": "string",
-            "defaultValue": "mcloud-monitor-workspace",
+            "defaultValue": "your-uniqe-workspace-name",
             "metadata": {
-                "description": "Uniqe name for the log analytics workspace."
+                "description": "The globally uniqe workspace name should include 4-63 letters, digits or '-'. The '-' shouldn't be the first or the last symbol."
             }
         },
         "sku": {
@@ -167,5 +167,11 @@
             "subscriptionId": "[split(variables('vWorkspaceResourceId'),'/')[2]]",
             "resourceGroup": "[split(variables('vWorkspaceResourceId'),'/')[4]]"
         }
-    ]
+    ],
+    "outputs": {
+        "workspaceResourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+        }
+    }
 }

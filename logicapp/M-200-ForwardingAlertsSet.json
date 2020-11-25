@@ -15,6 +15,16 @@
                 "description": "The MCB Service Bus namespace send only connection string."
             }
         },
+        "workspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies your log analytics workspace name."
+            }
+        },
+        "workspaceResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
+        },
         "serviceBusConnectionName": {
             "type": "string",
             "defaultValue": "MCB-ServiceBusConnection",
@@ -55,14 +65,6 @@
         "retentionDays": {
             "type": "int",
             "defaultValue": 0
-        },
-        "workspaceName": {
-            "type": "string",
-            "defaultValue": "mcloud-monitor-workspace"
-        },
-        "workspaceResourceGroupName": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().name]"
         },
         "tags": {
             "type": "object",

@@ -18,9 +18,8 @@
         },
         "workspaceName": {
             "type": "string",
-            "defaultValue": "mcloud-monitor-workspace",
             "metadata": {
-                "description": "Name of the log analytics workspace."
+                "description": "Specifies your log analytics workspace name."
             }
         },
         "resourceGroupName": {

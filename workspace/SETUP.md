@@ -95,7 +95,14 @@
 - AKS Monitor Container: 12817
 - Azure Network Policy Dashboard based on Azure Monitor: 13102
 
-## 3.(Option) 設定 MCB Monitor Alert轉發功能
+## 3.匯入MCB進階儀錶板
+> 進階儀錶板會使用客製化指標，需確定 VM 使用 ExistingVmOnboardingTemplate.json 納管指定的 VM 啟用 Agent 監控 </p>
+> 可參考 VM 監控章節[由此處進入](https://github.com/mcloud-support/arm/tree/main/alert/vm/README.md)
+- 點選 MCB Monitor Portal 左側 + 號，Create > Import，顯示Import功能頁後，在上方 Upload JSON file按鈕，載入如下 JSON file
+- 一般 VM 儀錶板範本 <a href="https://raw.githubusercontent.com/mcloud-support/arm/main/dashboard/Azure%20VM%20Multiple%20Panels-MCB.json" download="Azure%20VM%20Multiple%20Panels-MCB.json">download Azure VM Multiple Panels-MCB</a> 
+- Apache VM 儀錶板範本 <a href="https://raw.githubusercontent.com/mcloud-support/arm/main/dashboard/Azure%20Apache%20VM%20Multiple%20Panels-MCB.json" download="Azure%20Apache%20VM%20Multiple%20Panels-MCB.json">download Azure Apache VM Multiple Panels-MCB</a>
+
+## 4.(Option) 設定 MCB Monitor Alert 轉發功能整合至 MCB 事件中心
 - 點選 MCB Monitor Portal 左側 Alerting > Notification Channels
 - Add Channel
 - Name: 任意名稱

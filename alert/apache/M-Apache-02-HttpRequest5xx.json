@@ -24,7 +24,9 @@
         },
         "resourceGroupName": {
             "type": "string",
-            "defaultValue": "[resourceGroup().name]"
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The Resource Group name of Log Analytics Workspace."
         },
         "location": {
             "type": "string",

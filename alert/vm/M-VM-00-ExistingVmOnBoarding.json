@@ -8,9 +8,19 @@
                 "description": "The name of VM."
             }
         },
-        "resourceGroupName": {
+        "workspaceResourceGroupName": {
             "type": "string",
-            "defaultValue": "[resourceGroup().name]"
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The Resource Group name of Log Analytics Workspace."
+            }
+        },
+        "vmResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The Resource Group name of VM."
+            }
         },
         "location": {
             "type": "String",
@@ -63,14 +73,14 @@
     },
     "variables": {
         // "VmName": "[split(parameters('VmResourceId'),'/')[8]]",
-        "VmResourceId": "[resourceId(subscription().subscriptionId, parameters('resourceGroupName'), 'Microsoft.Compute/virtualMachines', parameters('VmName'))]",
+        "VmResourceId": "[resourceId(subscription().subscriptionId, parameters('vmResourceGroupName'), 'Microsoft.Compute/virtualMachines', parameters('VmName'))]",
         "DaExtensionName": "[if(equals(toLower(parameters('osType')), 'windows'), 'DependencyAgentWindows', 'DependencyAgentLinux')]",
         "DaExtensionType": "[if(equals(toLower(parameters('osType')), 'windows'), 'DependencyAgentWindows', 'DependencyAgentLinux')]",
         "DaExtensionVersion": "9.5",
         "MmaExtensionName": "[if(equals(toLower(parameters('osType')), 'windows'), 'MMAExtension', 'OMSExtension')]",
         "MmaExtensionType": "[if(equals(toLower(parameters('osType')), 'windows'), 'MicrosoftMonitoringAgent', 'OmsAgentForLinux')]",
         "MmaExtensionVersion": "[if(equals(toLower(parameters('osType')), 'windows'), '1.0', '1.4')]",
-        "WorkspaceResourceId": "[resourceId(subscription().subscriptionId, parameters('resourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]"
+        "WorkspaceResourceId": "[resourceId(subscription().subscriptionId, parameters('workspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]"
     },
     "resources": [
         {

@@ -1,0 +1,3001 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_AZURE_MONITOR",
+      "label": "Azure Monitor",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "grafana-azure-monitor-datasource",
+      "pluginName": "Azure Monitor"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "7.3.3"
+    },
+    {
+      "type": "datasource",
+      "id": "grafana-azure-monitor-datasource",
+      "name": "Azure Monitor",
+      "version": "0.3.0"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "limit": 100,
+        "name": "Annotations & Alerts",
+        "queryType": "Azure Log Analytics",
+        "rawQuery": "<your table>\n| where $__timeFilter() \n| project TimeGenerated, Text=YourTitleColumn, Tags=\"tag1,tag2\"",
+        "showIn": 0,
+        "subscription": "b5b3e302-b0e5-48c3-9f28-9b7d4fb14957",
+        "type": "dashboard",
+        "workspace": "f3eb793b-3305-4559-b791-3c1692041826"
+      }
+    ]
+  },
+  "description": "",
+  "editable": true,
+  "gnetId": 11659,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1606977483581,
+  "links": [
+    {
+      "icon": "doc",
+      "tags": [],
+      "targetBlank": true,
+      "title": "Metrics Definitions",
+      "tooltip": "",
+      "type": "link",
+      "url": "https://docs.microsoft.com/en-in/azure/azure-monitor/platform/metrics-supported#microsoftcomputevirtualmachines"
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 55,
+      "panels": [],
+      "title": "Web Application",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_AZURE_MONITOR}",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "id": 57,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "ApacheError_CL \r\n| where $__timeFilter()\n| project TimeGenerated, Type, Computer, Level, Message \n| limit 10",
+            "resultFormat": "time_series",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "$sub"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Apache Error Logs (Top 10)",
+      "transformations": [],
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "datasource": "${DS_AZURE_MONITOR}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "id": 59,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "max"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "ApacheAccess_CL\r\n| where $__timeFilter()\n| where (code_d >= 400 and code_d < 500)\r\n| distinct code_d, Computer\r\n| join kind=inner (\r\n    ApacheAccess_CL\r\n    | where $__timeFilter()\n    | summarize s=count() by code_d, bin(TimeGenerated, 1m), Computer\r\n    ) on code_d, Computer\r\n| project TimeGenerated, vm=Computer\r, http=tostring(toint(code_d)), toint(s)\n| order by TimeGenerated asc ",
+            "resultFormat": "time_series",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "$sub"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Apache Http Request Status 4xx Count",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_AZURE_MONITOR}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "id": 60,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "max"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "ApacheAccess_CL\r\n| where $__timeFilter()\n| where (code_d >= 500 and code_d < 600)\r\n| distinct code_d, Computer\r\n| join kind=inner (\r\n    ApacheAccess_CL\r\n    | where $__timeFilter()\n    | summarize sum=count() by code_d, bin(TimeGenerated, 1m), Computer\r\n    ) on code_d, Computer\r\n| project TimeGenerated, vm=Computer\r, http=tostring(toint(code_d)), toint(sum)\n| order by TimeGenerated asc ",
+            "resultFormat": "time_series",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "$sub"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Apache Http Request Status 5xx Count",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_AZURE_MONITOR}",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "method"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 84
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "source"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 118
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Computer"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 124
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 164
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "status"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 75
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "size"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 88
+              },
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "path"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": null
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 18,
+        "x": 0,
+        "y": 9
+      },
+      "id": 61,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "ApacheAccess_CL \r\n| where TimeGenerated > ago(24h) \r\n| where code_d != 200\r\n| limit 50\r\n| project Time=TimeGenerated, Computer, source=host_s, method=method_s, path=path_s, status=code_d, size=size_d, agent=agent_s\r\n| order by Time desc",
+            "resultFormat": "time_series",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "$sub"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Anomaly Http Request Logs (Last 50)",
+      "transformations": [],
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "datasource": "${DS_AZURE_MONITOR}",
+      "description": "偵測來源端IP，時間區間內非 http status \"200\"的回應統計",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sum"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "lcd-gauge"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 100
+                    },
+                    {
+                      "color": "orange",
+                      "value": 200
+                    },
+                    {
+                      "color": "red",
+                      "value": 300
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 9
+      },
+      "id": 62,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "ApacheAccess_CL\r\n| where $__timeFilter()\n| where code_d != 200\r\n| summarize Sum=count() by host_s, bin(TimeGenerated, 5m), Computer\r\n| project SourceIpAddress=host_s, Computer, Sum\n| order by Sum desc  \r\n| limit 10 ",
+            "resultFormat": "time_series",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "$sub"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Anomaly Request Top 10",
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 45,
+      "panels": [],
+      "title": "VM Details",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_AZURE_MONITOR}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "displayMode": "auto",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Computer"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 0
+                    },
+                    {
+                      "color": "green",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "from": "",
+                    "id": 1,
+                    "text": "Bad",
+                    "to": "",
+                    "type": 1,
+                    "value": "0"
+                  },
+                  {
+                    "from": "",
+                    "id": 2,
+                    "text": "Good",
+                    "to": "",
+                    "type": 1,
+                    "value": "1"
+                  }
+                ]
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 1
+              },
+              {
+                "id": "custom.width",
+                "value": 50
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AvailableMB"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "unit",
+                "value": "mbytes"
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-text"
+              },
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "lcd-gauge"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "percentage",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RootFreeSpace"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.width",
+                "value": 130
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "MountFreeSpace"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.width",
+                "value": 130
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "MemoryMB"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "mbytes"
+              },
+              {
+                "id": "custom.width",
+                "value": 120
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "OSType"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 37,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Computer"
+          }
+        ]
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated) \n| where Origin == \"vm.azm.ms/map\" \r\n| where Namespace == \"Computer\" \r\n| where Name == \"Heartbeat\"\r\n| summarize max(TimeGenerated) by Computer, Status = Val\r\n| where max_TimeGenerated > ago(5m)\r\n| project Computer, Status\r\n| order by Computer asc",
+            "resultFormat": "table",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "$sub"
+        },
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated) \n| where Namespace == \"Memory\" \r\n| where Name == \"AvailableMB\"\r\n| summarize AvailableMB = avg(Val), max(TimeGenerated) by Computer\r\n| where max_TimeGenerated > ago(5m)\r\n| project Computer, AvailableMB\r\n| order by Computer asc",
+            "resultFormat": "table",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "B",
+          "subscription": "$sub"
+        },
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated)\n| where Namespace == \"Processor\" \r\n| where Name == \"UtilizationPercentage\"\r\n| summarize CPU = avg(Val), max(TimeGenerated) by Computer\r\n| where max_TimeGenerated > ago(5m)\r\n| project Computer, CPU\r\n| order by Computer asc",
+            "resultFormat": "table",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "C",
+          "subscription": "$sub"
+        },
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated)\n| where Origin == \"vm.azm.ms\" \r\n| where Namespace == \"LogicalDisk\" \r\n| where Name == \"FreeSpacePercentage\" \r\n| extend t=parse_json(Tags) \r\n| where tostring(t[\"vm.azm.ms/mountId\"]) == \"/\" \r\n| summarize FreeSpacePercentage = avg(Val), max(TimeGenerated) by Computer\r\n| where max_TimeGenerated > ago(5m)\r\n| project Computer, FreeSpacePercentage\n| order by Computer asc",
+            "resultFormat": "table",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "hide": true,
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "F",
+          "subscription": "$sub"
+        },
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated)\n| where Origin == \"vm.azm.ms\" \r\n| where Namespace == \"LogicalDisk\" \r\n| where Name == \"FreeSpacePercentage\" \r\n| extend t=parse_json(Tags) \r\n| where tostring(t[\"vm.azm.ms/mountId\"]) == \"/\" \r\n| summarize RootFreeSpace = avg(Val), max(TimeGenerated) by Computer\r\n| where max_TimeGenerated > ago(5m)\r\n| project Computer, RootFreeSpace\n| join (InsightsMetrics\r\n    | where $__timeFilter(TimeGenerated)\n    | where Origin == \"vm.azm.ms\" \r\n    | where Namespace == \"LogicalDisk\" \r\n    | where Name == \"FreeSpacePercentage\" \r\n    | extend t=parse_json(Tags) \r\n    | where tostring(t[\"vm.azm.ms/mountId\"]) == \"/mnt\" \r\n    | summarize MountFreeSpace = avg(Val), max(TimeGenerated) by Computer\r\n    | where max_TimeGenerated > ago(5m)\r\n    | project Computer, MountFreeSpace)\r\n    on Computer\r\n| project Computer, RootFreeSpace, MountFreeSpace\n| order by Computer asc",
+            "resultFormat": "table",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "hide": false,
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "L",
+          "subscription": "$sub"
+        },
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "VMComputer\r\n| where $__timeFilter(TimeGenerated)\n| summarize MemoryMB=max(PhysicalMemoryMB), max(TimeGenerated) by Computer, OperatingSystemFamily, OperatingSystemFullName\r\n| where max_TimeGenerated > ago(24h)\r\n| project Computer, MemoryMB, OSType=OperatingSystemFamily, OS=OperatingSystemFullName\r\n| order by Computer asc",
+            "resultFormat": "table",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "K",
+          "subscription": "$sub"
+        },
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated)\n| where Origin == \"vm.azm.ms\" \r\n| where Namespace == \"LogicalDisk\" \r\n| where Name == \"FreeSpaceMB\" \r\n| extend t=parse_json(Tags) \r\n| where tostring(t[\"vm.azm.ms/mountId\"]) == \"/\" \r\n| summarize FreeSpaceMB = avg(Val), max(TimeGenerated) by Computer\r\n| where max_TimeGenerated > ago(5m)\r\n| project Computer, FreeSpaceMB\n| order by Computer asc",
+            "resultFormat": "table",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "hide": true,
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "G",
+          "subscription": "$sub"
+        },
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated) \n| where Namespace == \"Network\" \r\n| where Name == \"ReadBytesPerSecond\"\r\n| summarize NetworkReadBytesPerSecond = avg(Val), max(TimeGenerated) by Computer\r\n| where max_TimeGenerated > ago(5m)\r\n| project Computer, NetworkReadBytesPerSecond \n| order by Computer asc",
+            "resultFormat": "table",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "hide": true,
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "D",
+          "subscription": "$sub"
+        },
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "InsightsMetrics\n| where $__timeFilter(TimeGenerated)\n| where Namespace == \"Network\" \r\n| where Name == \"WriteBytesPerSecond\"\r\n| summarize NetworkWriteBytesPerSecond = avg(Val), max(TimeGenerated) by Computer\r\n| where max_TimeGenerated > ago(10m)\r\n| project Computer, NetworkWriteBytesPerSecond \n| order by Computer asc",
+            "resultFormat": "table",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "hide": true,
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "E",
+          "subscription": "$sub"
+        },
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated)\n| where Origin == \"vm.azm.ms\" \r\n| where Namespace == \"LogicalDisk\" \r\n| where Name == \"ReadBytesPerSecond\" \r\n| extend t=parse_json(Tags) \r\n| where tostring(t[\"vm.azm.ms/mountId\"]) == \"/\" \r\n| summarize ReadBytesPerSecond= avg(Val), max(TimeGenerated) by Computer\r\n| where max_TimeGenerated > ago(5m)\r\n| project Computer, ReadBytesPerSecond\n| order by Computer asc",
+            "resultFormat": "table",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "hide": true,
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "H",
+          "subscription": "$sub"
+        },
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated)\n| where Origin == \"vm.azm.ms\" \r\n| where Namespace == \"LogicalDisk\" \r\n| where Name == \"WriteBytesPerSecond\" \r\n| extend t=parse_json(Tags) \r\n| where tostring(t[\"vm.azm.ms/mountId\"]) == \"/\" \r\n| summarize WriteBytesPerSecond = avg(Val), max(TimeGenerated) by Computer\r\n| where max_TimeGenerated > ago(5m)\r\n| project Computer, WriteBytesPerSecond\n| order by Computer asc",
+            "resultFormat": "table",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "hide": true,
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "I",
+          "subscription": "$sub"
+        },
+        {
+          "appInsights": {
+            "dimension": [],
+            "metricName": "select",
+            "timeGrain": "auto"
+          },
+          "azureLogAnalytics": {
+            "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated)\n| where Origin == \"vm.azm.ms\" \r\n| where Namespace == \"LogicalDisk\" \r\n| where Name == \"BytesPerSecond\" \r\n| extend t=parse_json(Tags) \r\n| where tostring(t[\"vm.azm.ms/mountId\"]) == \"/\" \r\n| summarize BytesPerSecond = avg(Val), max(TimeGenerated) by Computer\r\n| where max_TimeGenerated > ago(5m)\r\n| project Computer, BytesPerSecond\n| order by Computer asc",
+            "resultFormat": "table",
+            "workspace": "$wsp"
+          },
+          "azureMonitor": {
+            "aggOptions": [],
+            "dimensionFilter": "*",
+            "dimensionFilters": [],
+            "metricDefinition": "select",
+            "metricName": "select",
+            "metricNamespace": "select",
+            "resourceGroup": "select",
+            "resourceName": "select",
+            "timeGrain": "auto",
+            "timeGrains": [],
+            "top": "10"
+          },
+          "hide": true,
+          "insightsAnalytics": {
+            "query": "",
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "J",
+          "subscription": "$sub"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Virtual Machines List Details",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {}
+        },
+        {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "Computer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "AvailableMB": 3,
+              "CPU": 2,
+              "Computer": 0,
+              "MemoryMB": 4,
+              "MountFreeSpace": 6,
+              "OS": 8,
+              "OSType": 7,
+              "RootFreeSpace": 5,
+              "Status": 1
+            },
+            "renameByName": {
+              "Computer": ""
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 41,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_AZURE_MONITOR}",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 6,
+            "w": 17,
+            "x": 0,
+            "y": 3
+          },
+          "hiddenSeries": false,
+          "id": 27,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.3",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\n| where $__timeFilter(TimeGenerated) \n| where Origin == \"vm.azm.ms\" \n| where Namespace == \"Processor\" \n| where Name == \"UtilizationPercentage\" \n| summarize Usage=avg(Val) by VM=Computer, bin(TimeGenerated, 1m)\n| order by TimeGenerated asc",
+                "resultFormat": "time_series",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "A",
+              "subscription": "$sub"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "CPU Usage",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percent",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_AZURE_MONITOR}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": null,
+                "displayMode": "auto",
+                "filterable": false,
+                "width": 100
+              },
+              "mappings": [
+                {
+                  "from": "",
+                  "id": 1,
+                  "text": "Bad",
+                  "to": "",
+                  "type": 1,
+                  "value": "0"
+                },
+                {
+                  "from": "",
+                  "id": 2,
+                  "text": "Good",
+                  "to": "",
+                  "type": 1,
+                  "value": "1"
+                }
+              ],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 6,
+            "w": 7,
+            "x": 17,
+            "y": 3
+          },
+          "hiddenSeries": false,
+          "id": 38,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": false
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.3",
+          "pointradius": 0.5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated) \n| where Origin == \"vm.azm.ms/map\" \r\n| where Namespace == \"Computer\" \r\n| where Name == \"Heartbeat\"\r\n| summarize Readness=avg(Val\r) by bin(TimeGenerated, 1m), Computer\n// | where max_TimeGenerated > ago(5m)\r\n//| project Computer, Readness=Val, TimeGenerated\r\n| order by TimeGenerated asc",
+                "resultFormat": "time_series",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "A",
+              "subscription": "$sub"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Virtual Machines Readness",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transformations": [],
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "none",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "title": "CPU",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 1,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_AZURE_MONITOR}",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 4
+          },
+          "hiddenSeries": false,
+          "id": 29,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.3",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {}
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\n| where $__timeFilter(TimeGenerated) \n| where Origin == \"vm.azm.ms\" \n| where Namespace == \"Memory\" \n| where Name == \"AvailableMB\" \n| summarize AvailableMB= avg(Val) by Computer, bin(TimeGenerated, 1m)\n| order by TimeGenerated asc",
+                "resultFormat": "time_series",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "hide": false,
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "A",
+              "subscription": "$sub"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Memory AvailableMB",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "MiB",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "repeat": null,
+      "title": "Memory",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 43,
+      "panels": [
+        {
+          "datasource": "${DS_AZURE_MONITOR}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": null,
+                "displayMode": "auto",
+                "filterable": false,
+                "width": 100
+              },
+              "mappings": [
+                {
+                  "from": "",
+                  "id": 1,
+                  "text": "Bad",
+                  "to": "",
+                  "type": 1,
+                  "value": "0"
+                },
+                {
+                  "from": "",
+                  "id": 2,
+                  "text": "Good",
+                  "to": "",
+                  "type": 1,
+                  "value": "1"
+                }
+              ],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Computer"
+                },
+                "properties": []
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Root"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "basic"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "thresholds"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "red",
+                          "value": null
+                        },
+                        {
+                          "color": "red",
+                          "value": 0
+                        },
+                        {
+                          "color": "green",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 100
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Mount"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "basic"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "red",
+                          "value": null
+                        },
+                        {
+                          "color": "red",
+                          "value": 0
+                        },
+                        {
+                          "color": "green",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "color"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 120
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 5,
+            "x": 0,
+            "y": 5
+          },
+          "id": 51,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "7.3.3",
+          "targets": [
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\r\n| where Origin == \"vm.azm.ms\" \r\n| where Namespace == \"LogicalDisk\" \r\n| where Name == \"Status\" \r\n| extend t=parse_json(Tags) \r\n| where tostring(t[\"vm.azm.ms/mountId\"]) == \"/\" \r\n| summarize max(TimeGenerated) by Computer, Root= Val\r\n| where max_TimeGenerated > ago(5m)\r\n| project Computer, Root\n| order by Computer asc",
+                "resultFormat": "table",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "A",
+              "subscription": "$sub"
+            },
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\r\n| where Origin == \"vm.azm.ms\" \r\n| where Namespace == \"LogicalDisk\" \r\n| where Name == \"Status\" \r\n| extend t=parse_json(Tags) \r\n| where tostring(t[\"vm.azm.ms/mountId\"]) == \"/mnt\" \r\n| summarize max(TimeGenerated) by Computer, Mount= Val\r\n| where max_TimeGenerated > ago(5m)\r\n| project Computer, Mount\n| order by Computer asc",
+                "resultFormat": "table",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "B",
+              "subscription": "$sub"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Disk Readness",
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "Computer"
+              }
+            }
+          ],
+          "transparent": true,
+          "type": "table"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_AZURE_MONITOR}",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 1,
+          "gridPos": {
+            "h": 8,
+            "w": 7,
+            "x": 5,
+            "y": 5
+          },
+          "hiddenSeries": false,
+          "id": 36,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": false,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.3",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\n| where $__timeFilter(TimeGenerated) \n| where Origin == \"vm.azm.ms\" \n| where Namespace == \"LogicalDisk\" \n| where Name == \"FreeSpacePercentage\" \n| extend t=parse_json(Tags) \n| where tostring(t[\"vm.azm.ms/mountId\"]) == \"/\" \n| summarize RootPartition = avg(Val) by Computer, bin(TimeGenerated, 1m)\n| order by TimeGenerated asc",
+                "resultFormat": "time_series",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "A",
+              "subscription": "$sub"
+            },
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\n| where $__timeFilter(TimeGenerated) \n| where Origin == \"vm.azm.ms\" \n| where Namespace == \"LogicalDisk\" \n| where Name == \"FreeSpacePercentage\" \n| extend t=parse_json(Tags) \n| where tostring(t[\"vm.azm.ms/mountId\"]) == \"/mnt\" \n| summarize MountPartition = avg(Val) by Computer, bin(TimeGenerated, 1m)\n| order by TimeGenerated asc",
+                "resultFormat": "time_series",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "B",
+              "subscription": "$sub"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Logical Disk FreeSpace Trend",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percent",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "datasource": "${DS_AZURE_MONITOR}",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": null,
+                "filterable": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "percentage",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 15
+                  },
+                  {
+                    "color": "green",
+                    "value": 30
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 5
+          },
+          "id": 31,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "vertical",
+            "reduceOptions": {
+              "calcs": [
+                "mean"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "7.3.3",
+          "targets": [
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\n| where $__timeFilter(TimeGenerated) \n| where Origin == \"vm.azm.ms\" \n| where Namespace == \"LogicalDisk\" \n| where Name == \"FreeSpacePercentage\" \n| extend t=parse_json(Tags) \n| where tostring(t[\"vm.azm.ms/mountId\"]) == \"/\" \n| summarize Root= avg(Val) by Computer, bin(TimeGenerated, 1m)\n| project Computer, Root, TimeGenerated\n| order by TimeGenerated asc",
+                "resultFormat": "time_series",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "A",
+              "subscription": "$sub"
+            },
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\n| where $__timeFilter(TimeGenerated) \n| where Origin == \"vm.azm.ms\" \n| where Namespace == \"LogicalDisk\" \n| where Name == \"FreeSpacePercentage\" \n| extend t=parse_json(Tags) \n| where tostring(t[\"vm.azm.ms/mountId\"]) == \"/mnt\" \n| summarize Mount= avg(Val) by Computer, bin(TimeGenerated, 1m)\n| project Computer, Mount, TimeGenerated\n| order by TimeGenerated asc",
+                "resultFormat": "time_series",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "B",
+              "subscription": "$sub"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Logical Disk Free Space",
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_AZURE_MONITOR}",
+          "description": "Root Partition",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 1,
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 0,
+            "y": 13
+          },
+          "hiddenSeries": false,
+          "id": 53,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": false
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.3",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated) \n| where Origin == \"vm.azm.ms\" \r\n| where Namespace == \"LogicalDisk\" \r\n| where Name == \"ReadBytesPerSecond\" \r\n| extend t=parse_json(Tags) \r\n| where tostring(t[\"vm.azm.ms/mountId\"]) == \"/\" \r\n| summarize Read= avg(Val) by Computer, bin(TimeGenerated, 1m)\r\n| join (InsightsMetrics\r\n    | where $__timeFilter(TimeGenerated) \n    | where Origin == \"vm.azm.ms\" \r\n    | where Namespace == \"LogicalDisk\" \r\n    | where Name == \"WritesPerSecond\" \r\n    | extend t=parse_json(Tags) \r\n    | where tostring(t[\"vm.azm.ms/mountId\"]) == \"/\" \r\n    | summarize Write= -avg(Val) by Computer, bin(TimeGenerated, 1m))\r\n    on TimeGenerated, Computer\r\n| project TimeGenerated, Computer, Read, Write\n| order by TimeGenerated asc",
+                "resultFormat": "time_series",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "A",
+              "subscription": "$sub"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Disk Read Write Bytes/Sec",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "decimals": null,
+              "format": "binBps",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_AZURE_MONITOR}",
+          "description": "Root Partition",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "unit": "ops"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 1,
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 12,
+            "y": 13
+          },
+          "hiddenSeries": false,
+          "id": 52,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.3",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated) \n| where Origin == \"vm.azm.ms\" \r\n| where Namespace == \"LogicalDisk\" \r\n| where Name == \"ReadsPerSecond\" \r\n| extend t=parse_json(Tags) \r\n| where tostring(t[\"vm.azm.ms/mountId\"]) == \"/\" \r\n| summarize rootReadsPerSecond = avg(Val) by Computer, bin(TimeGenerated, 1m)\r\n// | project Computer, rootReadsPerSecond\r\n| join (InsightsMetrics\r\n    | where $__timeFilter(TimeGenerated) \n    | where Origin == \"vm.azm.ms\" \r\n    | where Namespace == \"LogicalDisk\" \r\n    | where Name == \"WritesPerSecond\" \r\n    | extend t=parse_json(Tags) \r\n    | where tostring(t[\"vm.azm.ms/mountId\"]) == \"/\" \r\n    | summarize rootWritesPerSecond = -avg(Val) by Computer, bin(TimeGenerated, 1m))\r\n    // | project Computer, rootWritesPerSecond )\r\n    on TimeGenerated, Computer\r\n| project TimeGenerated, Computer, rootReadsPerSecond, rootWritesPerSecond\r\n| order by TimeGenerated asc",
+                "resultFormat": "time_series",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "A",
+              "subscription": "$sub"
+            },
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\n| where $__timeFilter(TimeGenerated) \n| where Origin == \"vm.azm.ms\" \n| where Namespace == \"LogicalDisk\" \n| where Name == \"FreeSpacePercentage\" \n| extend t=parse_json(Tags) \n| where tostring(t[\"vm.azm.ms/mountId\"]) == \"/mnt\" \n| summarize MountPartition = avg(Val) by Computer, bin(TimeGenerated, 1m)\n| order by TimeGenerated asc",
+                "resultFormat": "time_series",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "hide": true,
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "B",
+              "subscription": "$sub"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Disk Read Write Operations/Sec",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "decimals": 2,
+              "format": "ops",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "title": "Disk",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      },
+      "id": 47,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_AZURE_MONITOR}",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 6
+          },
+          "hiddenSeries": false,
+          "id": 49,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.3",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated) \r\n| where Namespace == \"Network\" \r\n| where Name == \"ReadBytesPerSecond\"\r\n| summarize Sent = -avg(Val) by bin(TimeGenerated, 1m), Computer\r\n| order by TimeGenerated asc",
+                "resultFormat": "time_series",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "A",
+              "subscription": "$sub"
+            },
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated) \r\n| where Namespace == \"Network\" \r\n| where Name == \"WriteBytesPerSecond\"\r\n| summarize Received = avg(Val) by bin(TimeGenerated, 1m), Computer\r\n| order by TimeGenerated asc",
+                "resultFormat": "time_series",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "B",
+              "subscription": "$sub"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Network I/O pressure",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "binBps",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_AZURE_MONITOR}",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 13
+          },
+          "hiddenSeries": false,
+          "id": 50,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.3",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated) \r\n| where Namespace == \"Network\" \r\n| where Name == \"ReadBytesPerSecond\"\r\n| summarize Sent = -avg(Val) by bin(TimeGenerated, 5m), Computer\r\n| order by TimeGenerated asc\n//| order by TimeGenerated asc",
+                "resultFormat": "time_series",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "B",
+              "subscription": "$sub"
+            },
+            {
+              "appInsights": {
+                "dimension": [],
+                "metricName": "select",
+                "timeGrain": "auto"
+              },
+              "azureLogAnalytics": {
+                "query": "InsightsMetrics\r\n| where $__timeFilter(TimeGenerated) \r\n| where Namespace == \"Network\" \r\n| where Name == \"WriteBytesPerSecond\"\r\n| summarize Received = avg(Val) by bin(TimeGenerated, 5m), Computer\r\n| order by TimeGenerated asc\n//| order by TimeGenerated asc",
+                "resultFormat": "time_series",
+                "workspace": "$wsp"
+              },
+              "azureMonitor": {
+                "aggOptions": [],
+                "dimensionFilter": "*",
+                "dimensionFilters": [],
+                "metricDefinition": "select",
+                "metricName": "select",
+                "metricNamespace": "select",
+                "resourceGroup": "select",
+                "resourceName": "select",
+                "timeGrain": "auto",
+                "timeGrains": [],
+                "top": "10"
+              },
+              "insightsAnalytics": {
+                "query": "",
+                "resultFormat": "time_series"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "A",
+              "subscription": "$sub"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Network I/O (5m avg)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "binBps",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "title": "Network",
+      "type": "row"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 26,
+  "style": "dark",
+  "tags": [
+    "azure",
+    "templates",
+    "mcb",
+    "apache",
+    "vm"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_AZURE_MONITOR}",
+        "definition": "subscriptions()",
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Subscription",
+        "multi": false,
+        "name": "sub",
+        "options": [],
+        "query": "subscriptions()",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_AZURE_MONITOR}",
+        "definition": "workspaces()",
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Log Analytics Workspaces",
+        "multi": false,
+        "name": "wsp",
+        "options": [],
+        "query": "workspaces()",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "1m",
+      "5m",
+      "15m",
+      "30m"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "",
+  "title": "Azure Apache VM Multiple Panels-MCB",
+  "uid": "xLoF81AGz",
+  "version": 1
+}

@@ -6,14 +6,13 @@
 ---
 ## 納管啟用 VM 監控偵測功能
 > 執行先決條件是 VM 已經存在。
-* <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2Fvm%2FM-VM-00-ExistingVmOnBoarding.json" target="_blank">![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)</a>
+* [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2Fvm%2FM-VM-00-ExistingVmOnBoarding.json)
 * 自動部署下列資源：
 * 輸入指定的 VM name，自動部署 Azure OmsAgent 並啟動 Workspace 診斷監測
 
 ## 建立 VM 監控告警
 ### 建立監控 Linux VM 根磁碟或掛載磁碟的剩餘空間告警為例：
-
-  * <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2Fvm%2FM-VM-01-FreeDiskSpace.json" target="_blank">![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)</a>
+  * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2Fvm%2FM-VM-01-FreeDiskSpace.json)
   * 自動部署下列資源：
   * 建立嚴重等級的「Insufficient Disk Space」 alert rule
   * 配置告警觸發時傳送訊息到指定的 ActionGroup

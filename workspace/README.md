@@ -5,7 +5,7 @@
 ---
 ## 登入用戶端 Azure Portal
 1. 新建收集診斷監測的工作區 Log Analytics Workspace 並配置相關功能 
-   * <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Fworkspace%2FM-100-CreateWorkspace.json" target="_blank">![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)</a>
+   * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Fworkspace%2FM-100-CreateWorkspace.json)
    * 自動部署下列資源：
    * 設定 Log Analytics Workspace，<font color=yellow size=3>此值為全域唯一</font>
    * 新建 Log Analytics Workspace
@@ -14,13 +14,13 @@
    * <font color=red size=3><b>重要回傳資訊，複製暫存，用於後續設定</b></font>
      * <font color=yellow size=3>workspaceResourceId</font>: 下個步驟用來啟用 Monitor Diagnostic Setting
 2. 啟用訂閱層工作區診斷監測
-   * <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Fworkspace%2FM-101-EnableDiagnosticSetting.json" target="_blank">![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)</a>
+   * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Fworkspace%2FM-101-EnableDiagnosticSetting.json)
    * 自動部署下列資源：
    * 必需填入上述提及的 workspaceResourceId
    * 啟用 Monitor Diagnostic Setting
 3. 執行下列建置前，請洽 MCB Azure 管理人員索取<font color=yellow size=3> MCB Central Service Bus Send Only 連線密語字串</font>，可參見[官網介紹](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-quickstart-portal)
 4. 建立與 MCB 訊息服務中心的連線，建立兩個應用程式分別轉發 Azure Alert 與 MCB Monitor Portal Alert 告警訊息到 MCB Portal 事件中心，並啟用診斷監控
-   * <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Flogicapp%2FM-200-ForwardingAlertsSet.json" target="_blank">![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)</a>
+   * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Flogicapp%2FM-200-ForwardingAlertsSet.json)
    * 自動部署下列資源：
    * 必需填入上述提及的 MCB Central Service Bus Send Only 連線密語字串
    * 建立 MCB-ServiceBusConnection 連接 MCB 訊息服務中心。

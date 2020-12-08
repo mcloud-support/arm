@@ -9,6 +9,40 @@
                 "description": "Create the resource group for the log analytics workspace."
             }
         },
+        "location": {
+            "type": "string",
+            "allowedValues": [
+                "australiacentral",
+                "australiaeast",
+                "australiasoutheast",
+                "brazilsouth",
+                "canadacentral",
+                "centralindia",
+                "centralus",
+                "eastasia",
+                "eastus",
+                "eastus2",
+                "francecentral",
+                "japaneast",
+                "koreacentral",
+                "northcentralus",
+                "northeurope",
+                "southafricanorth",
+                "southcentralus",
+                "southeastasia",
+                "switzerlandnorth",
+                "switzerlandwest",
+                "uksouth",
+                "ukwest",
+                "westcentralus",
+                "westeurope",
+                "westus",
+                "westus2"
+            ],
+            "metadata": {
+                "description": "Specifies the location for the log analytics workspace."
+            }
+        },
         "analyticsWorkspaceName": {
             "type": "string",
             "defaultValue": "-workspace",
@@ -37,16 +71,13 @@
             }
         }
     },
-    "variables": {
-        "location": "[resourceGroup().location]"
-    },
     "resources": [
         // 先新建資源群組供後續 workspace 使用
         {
             "name": "[parameters('resourceGroupName')]",
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2019-10-01",
-            "location": "[variables('location')]",
+            "location": "[parameters('location')]",
             "tags": {
                 "displayname": "resource-group"
             }
@@ -81,7 +112,7 @@
                         "value": "[parameters('resourceGroupName')]"
                     },
                     "location": {
-                        "value": "[variables('location')]"
+                        "value": "[parameters('location')]"
                     }
                 }
             }
@@ -165,7 +196,7 @@
                         "value": "[parameters('resourceGroupName')]"
                     },
                     "location": {
-                        "value": "[variables('location')]"
+                        "value": "[parameters('location')]"
                     }
                 }
             }

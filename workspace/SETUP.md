@@ -6,7 +6,7 @@
 > 若不知道 Cloud Shell 可參考[官方設定教學](https://docs.microsoft.com/zh-tw/azure/cloud-shell/overview)
 
 ## 上載並執行 AzureADApplication.ps1
-* [另存檔案下載 AzureADApplication.ps1](https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Fworkspace%2FAzureADApplication.ps1)
+* [另存檔案下載 AzureADApplication.ps1](https://raw.githubusercontent.com/mcloud-support/arm/main/workspace/AzureADApplication.ps1)
 * Cloud Shell Upload AzureADApplication.ps1
 * ![cloudshell-1.png](snapshot/cloudshell-1.png)
 * 執行 AzureADApplication.ps1

@@ -1,0 +1,215 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceGroupName": {
+            "type": "string",
+            "defaultValue" : "CmpSystemGroup",
+            "metadata": {
+                "description": "Create the resource group for the log analytics workspace."
+            }
+        },
+        "location": {
+            "type": "string",
+            "allowedValues": [
+                "australiacentral",
+                "australiaeast",
+                "australiasoutheast",
+                "brazilsouth",
+                "canadacentral",
+                "centralindia",
+                "centralus",
+                "eastasia",
+                "eastus",
+                "eastus2",
+                "francecentral",
+                "japaneast",
+                "koreacentral",
+                "northcentralus",
+                "northeurope",
+                "southafricanorth",
+                "southcentralus",
+                "southeastasia",
+                "switzerlandnorth",
+                "switzerlandwest",
+                "uksouth",
+                "ukwest",
+                "westcentralus",
+                "westeurope",
+                "westus",
+                "westus2"
+            ],
+            "metadata": {
+                "description": "Specifies the location for the log analytics workspace."
+            }
+        },
+        "analyticsWorkspaceName": {
+            "type": "string",
+            "defaultValue": "-workspace",
+            "metadata": {
+                "description": "The globally uniqe log analytics workspace name should include 4-63 letters, digits or '-'. The '-' shouldn't be the first or the last symbol."
+            }
+        },
+        "analyticsWorkspaceSku": {
+            "type": "String",
+            "defaultValue": "pergb2018",
+            "allowedValues": [
+                "pergb2018",
+                "Standalone",
+                "PerNode",
+                "Standard",
+                "Premium"
+            ],
+            "metadata": {
+                "description": "Pricing tier: PerGB2018 or legacy tiers (Standalone, PerNode, Standard or Premium) which are not available to all customers."
+            }
+        },
+        "serviceBusConnectionString": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The MCB Service Bus namespace send only connection string."
+            }
+        }
+    },
+    "resources": [
+        // 先新建資源群組供後續 workspace 使用
+        {
+            "name": "[parameters('resourceGroupName')]",
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2019-10-01",
+            "location": "[parameters('location')]",
+            "tags": {
+                "displayname": "resource-group"
+            }
+        },
+        {
+            "name": "linkedAnalyticsWorkspace",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "resourceGroup": "[parameters('resourceGroupName')]",
+            //以 dependsOn表示部署先後順序，我們希望 workspace 能在 resource group 建立之後部屬
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups', parameters('resourceGroupName'))]" 
+            ],
+            "properties": {
+                "expressionEvaluationOptions": {
+                    //scope 代表我們在此子範本內所使用的參數範圍，我們想要沿用父範本的參數，故使用 'outer'
+                    "scope": "outer"
+                },
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/mcloud-support/arm/main/workspace/M-100-CreateWorkspace.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "workspaceName": {
+                        "value": "[parameters('analyticsWorkspaceName')]"
+                    },
+                    "sku": {
+                        "value": "[parameters('analyticsWorkspaceSku')]"
+                    },
+                    "resourceGroupName": {
+                        "value": "[parameters('resourceGroupName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
+                }
+            }
+        },
+         // diagnostic settings 與 resource group 一樣在 subscription scope 部屬，不需要使用巢狀子範本的方式來撰寫部屬。
+        {
+            "name": "subscriptionLogsToLogAnalytics",
+            "type": "Microsoft.Insights/diagnosticSettings",
+            "apiVersion": "2017-05-01-preview",
+            //以 dependsOn 表示此 diagnostic 設定要在 workspace 資源建立完以後執行
+            "dependsOn": [
+                "linkedAnalyticsWorkspace"
+            ],
+            "properties": {
+                // "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                 // workspaceId 的表示比較複雜，加上在 subscription scope 裡面無法使用 resourceGroup( ) 函數來取得所在 resourceGroup 資訊，於是我們用 concat( ) 方式來組成 workspaceId
+                "workspaceId": "[concat(subscription().id,'/resourceGroups/', parameters('resourceGroupName'),'/providers/Microsoft.OperationalInsights/workspaces/',parameters('analyticsWorkspaceName'))]",
+                "logs": [
+                    {
+                        "category": "Administrative",
+                        "enabled": true
+                    },
+                    {
+                        "category": "Security",
+                        "enabled": true
+                    },
+                    {
+                        "category": "ServiceHealth",
+                        "enabled": true
+                    },
+                    {
+                        "category": "Alert",
+                        "enabled": true
+                    },
+                    {
+                        "category": "Recommendation",
+                        "enabled": true
+                    },
+                    {
+                        "category": "Policy",
+                        "enabled": true
+                    },
+                    {
+                        "category": "Autoscale",
+                        "enabled": true
+                    },
+                    {
+                        "category": "ResourceHealth",
+                        "enabled": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "linkedForwardingAlertsSet",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "resourceGroup": "[parameters('resourceGroupName')]",
+            //以 dependsOn表示部署先後順序，我們希望 linkedForwardingAlertsSet 能在 subscriptionLogsToLogAnalytics 建立之後部屬
+            "dependsOn": [
+                "subscriptionLogsToLogAnalytics" 
+            ],
+            "properties": {
+                "expressionEvaluationOptions": {
+                    //scope 代表我們在此子範本內所使用的參數範圍，我們想要沿用父範本的參數，故使用 'outer'
+                    "scope": "outer"
+                },
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/mcloud-support/arm/main/logicapp/M-200-ForwardingAlertsSet.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "workspaceName": {
+                        "value": "[parameters('analyticsWorkspaceName')]"
+                    },
+                    "serviceBusConnectionString": {
+                        "value": "[parameters('serviceBusConnectionString')]"
+                    },
+                    "workspaceResourceGroupName": {
+                        "value": "[parameters('resourceGroupName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "actionGroupIdFromLinked": {
+            "type": "string",
+            "value": "[reference('linkedForwardingAlertsSet').outputs.actionGroupId.value]"
+        },
+        "logicAppUrlFromLinked": {
+            "type": "string",
+            "value": "[reference('linkedForwardingAlertsSet').outputs.logicAppUrl.value]"
+        }
+    }
+}

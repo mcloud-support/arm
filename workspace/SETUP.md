@@ -10,8 +10,8 @@
 * 打開該檔，請先取代欲執行的 Subscription Id 的值 \<replace-your-subscription-Id-in-here\>
 * 然後上傳 AzureADApplication.ps1 到 Cloud Shell
 * ![cloudshell-1.png](snapshot/cloudshell-1.png)
-* 先執行 Connect-AzureAD 指令，連結 AD
-* 再執行 AzureADApplication.ps1
+* 先執行 `Connect-AzureAD` 指令，連結 AD
+* 再執行 `AzureADApplication.ps1`
 * ![cloudshell-2.png](snapshot/cloudshell-2.png)
 * 自動完成下列的功能設定
   * 使用 Microsoft身分識別平台註冊 MCB Monitor 應用程式

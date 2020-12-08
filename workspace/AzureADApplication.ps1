@@ -33,4 +33,4 @@ New-AzureADApplicationPasswordCredential -ObjectId $app.ObjectId -EndDate "12/31
 #查詢 Tenant Id
 Get-AzureADTenantDetail -All $false
 
-Disconnect-AzureADnano
+Disconnect-AzureAD

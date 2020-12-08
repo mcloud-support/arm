@@ -5,9 +5,10 @@
 ## 開啟 Cloud Shell，進入 PowerShell Consol
 > 若不知道 Cloud Shell 可參考[官方設定教學](https://docs.microsoft.com/zh-tw/azure/cloud-shell/overview)
 
-## 上載並執行 AzureADApplication.ps1
+## 下載 AzureADApplication.ps1 填入欲執行的 Subscription Id，然後上載 Cloud Shell 執行 AzureADApplication.ps1
 * [另存檔案下載 AzureADApplication.ps1](https://raw.githubusercontent.com/mcloud-support/arm/main/workspace/AzureADApplication.ps1)
-* Cloud Shell Upload AzureADApplication.ps1
+* 打開該檔，請先取代欲執行的 Subscription Id 的值 \<replace-your-subscription-Id-in-here\>
+* 然後上傳 AzureADApplication.ps1 到 Cloud Shell
 * ![cloudshell-1.png](snapshot/cloudshell-1.png)
 * 執行 AzureADApplication.ps1
 * ![cloudshell-2.png](snapshot/cloudshell-2.png)

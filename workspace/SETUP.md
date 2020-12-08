@@ -2,43 +2,31 @@
 
 # 以 CSP 登入租用戶端 Azure Portal
 > 進入 MyCustomers ，選擇要設定的租用戶資源，進入該租用戶的 Azure Portal
-## 開啟 Cloud Shell，進入 CLI Consol
+## 開啟 Cloud Shell，進入 PowerShell Consol
 > 若不知道 Cloud Shell 可參考[官方設定教學](https://docs.microsoft.com/zh-tw/azure/cloud-shell/overview)
 
-### 執行指令能完成下列包含的功能設定
-* 使用 Microsoft身分識別平台註冊 MCB Monitor 應用程式
-  * 此功能是讓用戶端 Azure 與 MCB Monitor應用程式產生信任關係，方能進行遠端調用監控資訊 </p>[Reference from Azure Docs](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
-* 註冊 MCB Monitor Portal 應用程式
-  * 註冊 MCB Monitor Portal 應用程式與租用戶的 Microsoft 身分識別平台之間建立信任關係。
-  * 產生 MCB Monitor 應用程式用戶端ID、租用戶ID與密碼，請記錄留存
-  * 指派角色給 MCB Monitor 應用程式
-  * 設定 MCB Monitor 應用程式存取的資源與功能
+## 上載並執行 AzureADApplication.ps1
+* [另存檔案下載 AzureADApplication.ps1](https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Fworkspace%2FAzureADApplication.ps1)
+* Cloud Shell Upload AzureADApplication.ps1
+* ![cloudshell-1.png](snapshot/cloudshell-1.png)
+* 執行 AzureADApplication.ps1
+* ![cloudshell-2.png](snapshot/cloudshell-2.png)
+* 自動完成下列的功能設定
+  * 使用 Microsoft身分識別平台註冊 MCB Monitor 應用程式
+    * 此功能是讓用戶端 Azure 與 MCB Monitor應用程式產生信任關係，方能進行遠端調用監控資訊 [Reference from Azure Docs](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
+  * 註冊 MCB Monitor Portal 應用程式
+    * 註冊 MCB Monitor Portal 應用程式與租用戶的 Microsoft 身分識別平台之間建立信任關係。
+    * 產生 MCB Monitor 應用程式用戶端ID、租用戶ID與密碼，請記錄留存
+    * 指派角色給 MCB Monitor 應用程式
+    * 設定 MCB Monitor 應用程式存取的資源與功能
+## 執行完成產生的資訊供後續設定使用
+- ![cloudshell-3.png](snapshot/cloudshell-3.png)
+- Directory (tenant) ID
+- Application (client) ID
+- Client secret <font color=yellow size=3>此值在您離開執行頁面後就「不會再次顯示」，若忘記，僅能重新產生</font>
 
-## 以下為指令，請複製到 Cloud Shell 上依序執行
-- Create Azure AD app registrations
-- Please replace your subscription ID then execute it.
-```
-az ad sp create-for-rbac -n "https://mon.mcloud.cht.com.tw" --years 99 --role Contributor --scopes /subscriptions/<replace_your_subscription_id_in_here>
-```
-- 執行後產生如下列的範例資訊，請全數留存，尤其是 password 在您離開此頁面後就「不會再次顯示」，若忘記，僅能重新產生
-```
-{
-  "appId": "xxx",
-  "displayName": "mon.mcloud.cht.com.tw",
-  "name": "https://mon.mcloud.cht.com.tw",
-  "password": "xxx",
-  "tenant": "xxx"
-}
-```
-- 使用上述執行結果的 appId 取代下列四處指令位置，並執行
-```
-az ad app permission add --id < replace_your_appId_in_here> --api 00000003-0000-0000-c000-000000000000 --api-permissions e1fe6dd8-ba31-4d61-89e7-88639da4683d=Scope; \
-az ad app permission add --id < replace_your_appId_in_here> --api ca7f3f0b-7d91-482c-8e09-c5d840d0eac5 --api-permissions e8dac03d-d467-4a7e-9293-9cca7df08b31=Scope; \
-az ad app permission grant --id < replace_your_appId_in_here> --api 00000003-0000-0000-c000-000000000000 --expires "never"; \
-az ad app permission grant --id < replace_your_appId_in_here> --api ca7f3f0b-7d91-482c-8e09-c5d840d0eac5 --expires "never"
-```
+
 ### 故障排除
-
 
 #### 1. 忘記應用程式用戶端密碼，重新產生
 - 在 Azure 入口網站的 應用程式註冊 中，選取上述應用程式 mon.mcloud.cht.com.tw

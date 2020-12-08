@@ -1,49 +1,54 @@
 [僅供MSP維運人員]
 
-# 登入用戶端 Azure Portal
-## 使用 Microsoft身分識別平台註冊 MCB Monitor 應用程式
-> 此功能是讓用戶端 Azure 與 MCB Monitor應用程式產生信任關係，方能進行遠端調用監控資訊 </p>[Reference from Azure Docs](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
+# 以 CSP 登入租用戶端 Azure Portal
+> 進入 MyCustomers ，選擇要設定的租用戶資源，進入該租用戶的 Azure Portal
+## 開啟 Cloud Shell，進入 CLI Consol
+> 若不知道 Cloud Shell 可參考[官方設定教學](https://docs.microsoft.com/zh-tw/azure/cloud-shell/overview)
 
----
-## 1. 登入用戶端檢查目前執行身分的 Azure AD 權限設定
-- 登入 Azure Portal，選擇 Azure Active Directory 管理功能。(注意目前使用的身分與角色，如果您的角色為 User，務必確定 non-administrators 可以操作登錄註冊應用程式的功能)
-- 在左側功能表，選擇 User settings。
-- 檢查應用程式登錄設定，這項功能可以設定為僅有 administrator 才能異動。也可以 any user in the Azure AD tenant can register an app.
+### 執行指令能完成下列包含的功能設定
+* 使用 Microsoft身分識別平台註冊 MCB Monitor 應用程式
+  * 此功能是讓用戶端 Azure 與 MCB Monitor應用程式產生信任關係，方能進行遠端調用監控資訊 </p>[Reference from Azure Docs](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
+* 註冊 MCB Monitor Portal 應用程式
+  * 註冊 MCB Monitor Portal 應用程式與租用戶的 Microsoft 身分識別平台之間建立信任關係。
+  * 產生 MCB Monitor 應用程式用戶端ID、租用戶ID與密碼，請記錄留存
+  * 指派角色給 MCB Monitor 應用程式
+  * 設定 MCB Monitor 應用程式存取的資源與功能
 
-## 2. 檢查訂閱權限設定
-- 操作人員角色至少是訂閱的 Access Administrator role 或 Owner
+## 以下為指令，請複製到 Cloud Shell 上依序執行
+- Create Azure AD app registrations
+- Please replace your subscription ID then execute it.
+```
+az ad sp create-for-rbac -n "https://mon.mcloud.cht.com.tw" --years 99 --role Contributor --scopes /subscriptions/<replace_your_subscription_id_in_here>
+```
+- 執行後產生如下列的範例資訊，請全數留存，尤其是 password 在您離開此頁面後就「不會再次顯示」，若忘記，僅能重新產生
+```
+{
+  "appId": "xxx",
+  "displayName": "mon.mcloud.cht.com.tw",
+  "name": "https://mon.mcloud.cht.com.tw",
+  "password": "xxx",
+  "tenant": "xxx"
+}
+```
+- 使用上述執行結果的 appId 取代下列四處指令位置，並執行
+```
+az ad app permission add --id < replace_your_appId_in_here> --api 00000003-0000-0000-c000-000000000000 --api-permissions e1fe6dd8-ba31-4d61-89e7-88639da4683d=Scope; \
+az ad app permission add --id < replace_your_appId_in_here> --api ca7f3f0b-7d91-482c-8e09-c5d840d0eac5 --api-permissions e8dac03d-d467-4a7e-9293-9cca7df08b31=Scope; \
+az ad app permission grant --id < replace_your_appId_in_here> --api 00000003-0000-0000-c000-000000000000 --expires "never"; \
+az ad app permission grant --id < replace_your_appId_in_here> --api ca7f3f0b-7d91-482c-8e09-c5d840d0eac5 --expires "never"
+```
+### 故障排除
 
-## 3. 註冊 MCB Monitor 應用程式
-> 註冊應用程式會在您的應用程式與 Microsoft 身分識別平台之間建立信任關係。 信任是單向的：您的應用程式會信任 Microsoft 身分識別平台，反之則不同。</p>
-> 請依照這些步驟建立應用程式註冊：
-- 登入 Azure [入口網站](https://portal.azure.com/) 
-- 搜尋並選取 [Azure Active Directory] 
-- 在 [管理]下選取 [應用程式註冊]，再選取 [新增註冊]。
-- 輸入應用程式的 名稱
-  - name: mon-mcloud-cht-com-tw
-- 指定可以使用應用程式的人員，有時也稱為「登入受眾」
-  - support account type: Accounts in this organizational directory only (xxx only - Single tenant)
-- 設定重新導向 URI
-  - 重新導向 URI: Web, https://mon.mcloud.cht.com.tw (可視環境的不同，修改此處網址)
-- 設定完成後，<font color=yellow size=3>產生 Application (client) ID </font>與 <font color=yellow size=3>Directory (tenant) ID</font>，需儲存備用
 
-
-## 4. 新增認證產生 MCB Monitor 應用程式用戶端密碼
-- 在 Azure 入口網站的 應用程式註冊 中，選取上述應用程式 mon-mcloud-cht-com-tw
+#### 1. 忘記應用程式用戶端密碼，重新產生
+- 在 Azure 入口網站的 應用程式註冊 中，選取上述應用程式 mon.mcloud.cht.com.tw
 - 選取 Certificates & secrets.
 - 選取 Client secrets -> New client secret.
   - 新增用戶端密碼的描述n : mon.mcloud.cht.com.tw
   - 選取持續時間 : Never
   - 選取 [新增] 
   - <font color=yellow size=3>記錄 Client secrets 產生的 Value (非ID)</font> 稍後需用於 MCB 用戶端監視服務功能設定 - <font color=yellow size=3>此值在您離開此頁面後就「不會再次顯示」，若忘記，僅能重新產生</font>
-## 5. 指派角色給 MCB Monitor 應用程式
-- 選擇 Subscriptions 功能管理頁面
-- 選擇 Access control (IAM).
-- 右側功能選擇 Add role assignment.
-- Role 選擇 Contributor
-- Select 輸入 mon-mcloud-cht-com-tw，點選出現的 member mon-mcloud-cht-com-tw 後儲存
-
-## 6. 設定 MCB Monitor 應用程式存取的資源與功能
+#### 2.設定 MCB Monitor 應用程式存取額外的資源與功能
 - 回到 [Azure Active Directory] 
 - 在 [管理]下選取 [應用程式註冊]，在應用程式註冊 中，選取上述應用程式 mon-mcloud-cht-com-tw
 - 選取左列管理的 API permissions

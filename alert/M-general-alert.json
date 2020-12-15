@@ -1,0 +1,202 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertRuleName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the alert rule."
+            }
+        },
+        "alertRuleDescription": {
+            "type": "string",
+            "metadata": {
+                "description": "Description of the alert rule."
+            }
+        },
+        "workspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the log analytics workspace name."
+            }
+        },
+        //指定日誌搜索查詢
+        "kustoQueryString": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the kusto query string in here."
+            }
+        },
+        //警報的嚴重性級別
+        "severityLevel" : {
+            "type": "int",
+            "defaultValue": 3,
+            "metadata": {
+                "description": "Specifies the serverity level, 1:critical, 3:Info ."
+            },
+            "allowedValues": [1,3]
+        },
+        //將值設置為"結果計數"
+        "queryType": {
+            "type": "string",
+            "defaultValue": "ResultCount", 
+            "metadata": {
+                "description": "Specifies the query type."
+            },
+            "allowedValues": [
+                "ResultCount"
+            ]
+        },
+        //需要提取資料進行查詢的時間視窗（應大於或等於頻率 In分鐘）
+        "timeWindowInMinutes": {
+            "type": "int",
+            "defaultValue": 5,  
+            "metadata": {
+                "description": "Time window for which data needs to be fetched for query (should be greater than or equal to frequencyInMinutes)."
+            }
+        },
+        //定義運行搜索的頻率和時間間隔
+        //應計算規則條件的頻率（以分鐘表示）
+        "frequencyInMinutes": {
+            "type": "int",
+            "defaultValue": 1,  
+            "metadata": {
+                "description": "The frequency (in minutes) at which rule condition should be evaluated."
+            }
+        },
+        //TriggerCondition 導致日誌搜索規則的條件
+        //*******************************************************************************/
+        //結果條件評估條件。 支援的值 - "大於值"或"小於"或"相等"
+        "sampleCountThresholdOperator": { 
+            "type": "string",
+            "defaultValue": "GreaterThan",
+            "allowedValues": [
+                "Equal",
+                "GreaterThan",
+                "LessThan"
+            ],
+            "metadata": {
+                "description": "Set the threshold operator."
+            }
+        },
+        "sampleCount": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata": {
+                "description": "Set a bad request count to fire alert."
+            }
+        },
+        //指標查詢規則的觸發條件-日誌指標觸發描述項
+        //*******************************************************************************/
+        //指標觸發器的閾值
+         //結果條件評估條件。 支援的值 - "大於值"或"小於"或"相等"
+        "thresholdOperator": { 
+            "type": "string",
+            "defaultValue": "GreaterThan",
+            "allowedValues": [
+                "Equal",
+                "GreaterThan",
+                "LessThan"
+            ],
+            "metadata": {
+                "description": "Set the threshold operator."
+            }
+        },
+        "threshold": {
+            "type": "int",
+            "metadata": {
+                "description": "Set the threshold."   
+            }
+        },
+        //指標觸發類型 - "連續"或"總計"
+        "metricTriggerType": {  
+            "type": "string",
+            "defaultValue": "Consecutive",
+            "allowedValues": [
+                "Consecutive", 
+                "Total" 
+            ],
+            "metadata": {
+                "description": "Set the metric trigger type."
+            }
+        },
+        //評估特定列上的指標
+        "metricColumn": { 
+            "type": "string", 
+            "metadata": {
+                "description": "Specifies the metric column name for trigger."
+            }
+        },
+        //應限制或抑制警報的時間（以分鐘表示）
+        "suppressAlertsInMinutes": {
+            "type": "int",
+            "defaultValue": 30,
+            "metadata": {
+                "description": "Set an amount of time to wait before alerting again."
+            }
+        },
+        "tags": {
+            "type": "object",
+            "defaultValue": {
+                "sourceFrom": "mcloud-support",
+                "solution": "collect-alert-message"
+            }
+        }
+
+    },
+    "variables": {
+        "resourceGroupName": "[resourceGroup().name]",
+        "location": "[resourceGroup().location]",
+        "vWorkspaceResourceId": "[resourceId(subscription().subscriptionId, variables('resourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]",
+        "actionGroupName": "ForwardToMCB-ActionGroup",
+        "vActionGroupResourceId": "[resourceId(subscription().subscriptionId, variables('resourceGroupName'), 'Microsoft.Insights/actionGroups', variables('actionGroupName'))]"
+    },
+    "resources":[ 
+        {
+            "type":"Microsoft.Insights/scheduledQueryRules",
+            "name": "[concat('[', if(equals(parameters('severityLevel'), 1), 'CRITICAL', 'INFO'), ']', parameters('alertRuleName'))]",
+            "apiVersion": "2018-04-16",
+            "location": "[variables('location')]",
+            "tags": "[parameters('tags')]",
+            "properties":{
+                "description": "[concat('[', if(equals(parameters('severityLevel'), 1), 'CRITICAL', 'INFO'), ']', parameters('alertRuleDescription'))]",
+                "enabled": "true",
+                //指定日誌搜索查詢
+                "source": {
+                    // "query": "ApacheAccess_CL | where (code_d >= 500 and code_d < 600) | summarize AggregatedValue = count() by bin(TimeGenerated, 5m), Http_Request_Status = code_d, Computer",
+                    "query": "[parameters('kustoQueryString')]",
+                    "dataSourceId": "[variables('vWorkspaceResourceId')]",
+                    "queryType":"[parameters('queryType')]"
+                },
+                //定義運行搜索的頻率和時間間隔
+                "schedule":{
+                    "frequencyInMinutes": "[parameters('frequencyInMinutes')]",
+                    "timeWindowInMinutes": "[parameters('timeWindowInMinutes')]"
+                },
+                "action":{
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    //警示的嚴重性
+                    "severity": "[parameters('severityLevel')]",
+                    //應限制或抑制警報的時間（以分鐘表示）
+                    "throttlingInMin": "[parameters('suppressAlertsInMinutes')]",
+                    "aznsAction":{
+                        "actionGroup": "[array(variables('vActionGroupResourceId'))]",
+                        "emailSubject": "[concat('[', if(equals(parameters('severityLevel'), 1), 'CRITICAL', 'INFO'), ']', parameters('alertRuleDescription'))]",
+                        "customWebhookPayload":"{ \"alertname\":\"#alertrulename\", \"IncludeSearchResults\":true }"
+                    },
+                    //導致警報規則的觸發條件
+                    "trigger":{
+                        "thresholdOperator": "[parameters('sampleCountThresholdOperator')]",
+                        "threshold": "[parameters('sampleCount')]",
+                        "metricTrigger": {
+                            "thresholdOperator": "[parameters('thresholdOperator')]",
+                            "threshold": "[parameters('threshold')]",
+                            "metricTriggerType": "[parameters('metricTriggerType')]",
+                            "metricColumn": "[parameters('metricColumn')]"
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

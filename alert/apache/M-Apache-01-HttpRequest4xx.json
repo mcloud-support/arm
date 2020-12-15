@@ -105,7 +105,7 @@
             "location": "[parameters('location')]",
             "tags": "[parameters('tags')]",
             "properties":{
-                "description": "[concat('[INFO', parameters('alertRuleDescription'))]",
+                "description": "[concat('[INFO]', parameters('alertRuleDescription'))]",
                 "enabled": "true",
                 "source": {
                     "query": "ApacheAccess_CL | where (code_d >= 400 and code_d < 500) | summarize AggregatedValue = count() by bin(TimeGenerated, 5m), Http_Request_Status = code_d, Computer",

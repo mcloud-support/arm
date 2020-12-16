@@ -60,7 +60,7 @@
      * 建立 「HTTP Request Status 4xx Count」 alert rule
      * 配置告警觸發時傳送訊息到指定的 ActionGroup
 2. 建立監控 Apache HTTP Request Status 5xx Count 嚴重告警為例：
-   * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2Fapache%2FM-Apache-01-HttpRequest5xx.json)
+   * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2Fapache%2FM-Apache-02-HttpRequest5xx.json)
    * 自動部署下列資源：
      * 建立 「HTTP Request Status 5xx Count」 alert rule
      * 配置告警觸發時傳送訊息到指定的 ActionGroup

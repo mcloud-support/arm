@@ -2,7 +2,6 @@
 > 以 VM 為例，VM建立完成，使用 ExistingVmOnboardingTemplate.json 納管指定的 VM 啟用 Agent 監控，可執行Alert腳本
 
 ## 泛用型告警規則
-https://raw.githubusercontent.com/mcloud-support/arm/main/alert/M-general-alert.json
 * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2FM-general-alert.json)
 * 需先備妥，至 MCB Monitor Portal 複製要建立告警的規則查詢字串
 * 自動部署下列資源：

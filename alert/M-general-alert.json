@@ -47,23 +47,6 @@
                 "ResultCount"
             ]
         },
-        //需要提取資料進行查詢的時間視窗（應大於或等於頻率 In分鐘）
-        "timeWindowInMinutes": {
-            "type": "int",
-            "defaultValue": 10,  
-            "metadata": {
-                "description": "Time window for which data needs to be fetched for query (should be greater than or equal to frequencyInMinutes)."
-            }
-        },
-        //定義運行搜索的頻率和時間間隔
-        //應計算規則條件的頻率（以分鐘表示）
-        "frequencyInMinutes": {
-            "type": "int",
-            "defaultValue": 5,  
-            "metadata": {
-                "description": "The frequency (in minutes) at which rule condition should be evaluated."
-            }
-        },
         //TriggerCondition 導致日誌搜索規則的條件
         //*******************************************************************************/
         //結果條件評估條件。 支援的值 - "大於值"或"小於"或"相等"
@@ -86,11 +69,28 @@
                 "description": "Set the threshold."
             }
         },
+        //需要提取資料進行查詢的時間視窗（應大於或等於頻率 In分鐘）
+        "timeWindowInMinutes": {
+            "type": "int",
+            "defaultValue": 10,  
+            "metadata": {
+                "description": "Time window for which data needs to be fetched for query (should be greater than or equal to frequencyInMinutes)."
+            }
+        },
+        //定義運行搜索的頻率和時間間隔
+        //應計算規則條件的頻率（以分鐘表示）
+        "frequencyInMinutes": {
+            "type": "int",
+            "defaultValue": 5,  
+            "metadata": {
+                "description": "The frequency (in minutes) at which rule condition should be evaluated."
+            }
+        },
         //指標查詢規則的觸發條件-日誌指標觸發描述項
         //*******************************************************************************/
         //指標觸發器的閾值
          //結果條件評估條件。 支援的值 - "大於值"或"小於"或"相等"
-        "triggerThresholdOperator": { 
+        "triggerConditionOperator": { 
             "type": "string",
             "defaultValue": "GreaterThan",
             "allowedValues": [
@@ -99,17 +99,17 @@
                 "LessThan"
             ],
             "metadata": {
-                "description": "Set the trigger threshold operator."
+                "description": "Set the trigger condition operator."
             }
         },
-        "triggerThreshold": {
+        "triggerConditionThreshold": {
             "type": "int",
             "metadata": {
-                "description": "Set the trigger threshold."   
+                "description": "Set the trigger condition threshold."   
             }
         },
         //指標觸發類型 - "連續"或"總計"
-        "triggerAlertBasedOnType": {  
+        "triggerConditionAlertBasedOnType": {  
             "type": "string",
             "defaultValue": "Consecutive",
             "allowedValues": [
@@ -117,7 +117,7 @@
                 "Total" 
             ],
             "metadata": {
-                "description": "Set the metric trigger type."
+                "description": "Set the condition metric trigger type."
             }
         },
         //匯集基於特定的欄位
@@ -189,9 +189,9 @@
                         "thresholdOperator": "[parameters('thresholdOperator')]",
                         "threshold": "[parameters('threshold')]",
                         "metricTrigger": {
-                            "thresholdOperator": "[parameters('triggerThresholdOperator')]",
-                            "threshold": "[parameters('triggerThreshold')]",
-                            "metricTriggerType": "[parameters('triggerAlertBasedOnType')]",
+                            "thresholdOperator": "[parameters('triggerConditionOperator')]",
+                            "threshold": "[parameters('triggerConditionThreshold')]",
+                            "metricTriggerType": "[parameters('triggerConditionAlertBasedOnType')]",
                             "metricColumn": "[parameters('aggregateOnColumn')]"
                         }
                     }

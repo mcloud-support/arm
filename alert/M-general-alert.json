@@ -50,23 +50,24 @@
         //TriggerCondition 導致日誌搜索規則的條件
         //*******************************************************************************/
         //結果條件評估條件。 支援的值 - "大於值"或"小於"或"相等"
-        "thresholdOperator": { 
+        "aggregateValueThresholdOperator": { 
             "type": "string",
             "defaultValue": "GreaterThan",
             "allowedValues": [
                 "Equal",
                 "GreaterThan",
+                "GreaterOrLessThan",
                 "LessThan"
             ],
             "metadata": {
-                "description": "Set the threshold operator."
+                "description": "Set the aggregate value threshold operator."
             }
         },
-        "threshold": {
+        "aggregateValueThreshold": {
             "type": "int",
             "defaultValue": 2,
             "metadata": {
-                "description": "Set the threshold."
+                "description": "Set the aggregate value threshold."
             }
         },
         //需要提取資料進行查詢的時間視窗（應大於或等於頻率 In分鐘）
@@ -186,8 +187,8 @@
                     },
                     //導致警報規則的觸發條件
                     "trigger":{
-                        "thresholdOperator": "[parameters('thresholdOperator')]",
-                        "threshold": "[parameters('threshold')]",
+                        "thresholdOperator": "[parameters('aggregateValueThresholdOperator')]",
+                        "threshold": "[parameters('aggregateValueThreshold')]",
                         "metricTrigger": {
                             "thresholdOperator": "[parameters('triggerConditionOperator')]",
                             "threshold": "[parameters('triggerConditionThreshold')]",

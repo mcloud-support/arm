@@ -54,9 +54,10 @@
             "type": "string",
             "defaultValue": "GreaterThan",
             "allowedValues": [
-                "Equal",
                 "GreaterThan",
-                "GreaterOrLessThan",
+                "GreaterThanOrEqual",
+                "Equal",
+                "LessThanOrEqual",
                 "LessThan"
             ],
             "metadata": {
@@ -95,8 +96,8 @@
             "type": "string",
             "defaultValue": "GreaterThan",
             "allowedValues": [
-                "Equal",
                 "GreaterThan",
+                "Equal",
                 "LessThan"
             ],
             "metadata": {
@@ -185,10 +186,11 @@
                         "emailSubject": "[concat('[', if(equals(parameters('severityLevel'), 1), 'CRITICAL', 'INFO'), ']', parameters('alertRuleDescription'))]",
                         "customWebhookPayload":"{ \"alertname\":\"#alertrulename\", \"IncludeSearchResults\":true }"
                     },
-                    //導致警報規則的觸發條件
+                    //導致警報規則的觸發條件 TriggerCondition
                     "trigger":{
                         "thresholdOperator": "[parameters('aggregateValueThresholdOperator')]",
                         "threshold": "[parameters('aggregateValueThreshold')]",
+                        //指標查詢規則的觸發條件
                         "metricTrigger": {
                             "thresholdOperator": "[parameters('triggerConditionOperator')]",
                             "threshold": "[parameters('triggerConditionThreshold')]",

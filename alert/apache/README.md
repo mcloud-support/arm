@@ -55,12 +55,12 @@
 
 ## 建立 Apache 應用程式監控告警
 1. 建立監控 Apache HTTP Request Status 4xx Count 一般告警為例：
-   * <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2Fapache%2FM-Apache-01-HttpRequest4xx.json" target="_blank">![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)</a>
+   * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2Fapache%2FM-Apache-01-HttpRequest4xx.json)
    * 自動部署下列資源：
      * 建立 「HTTP Request Status 4xx Count」 alert rule
      * 配置告警觸發時傳送訊息到指定的 ActionGroup
 2. 建立監控 Apache HTTP Request Status 5xx Count 嚴重告警為例：
-   * <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2Fapache%2FM-Apache-01-HttpRequest5xx.json" target="_blank">![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)</a>
+   * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2Fapache%2FM-Apache-01-HttpRequest5xx.json)
    * 自動部署下列資源：
      * 建立 「HTTP Request Status 5xx Count」 alert rule
      * 配置告警觸發時傳送訊息到指定的 ActionGroup

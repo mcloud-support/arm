@@ -50,7 +50,7 @@
         //需要提取資料進行查詢的時間視窗（應大於或等於頻率 In分鐘）
         "timeWindowInMinutes": {
             "type": "int",
-            "defaultValue": 5,  
+            "defaultValue": 10,  
             "metadata": {
                 "description": "Time window for which data needs to be fetched for query (should be greater than or equal to frequencyInMinutes)."
             }
@@ -59,7 +59,7 @@
         //應計算規則條件的頻率（以分鐘表示）
         "frequencyInMinutes": {
             "type": "int",
-            "defaultValue": 1,  
+            "defaultValue": 5,  
             "metadata": {
                 "description": "The frequency (in minutes) at which rule condition should be evaluated."
             }
@@ -67,29 +67,6 @@
         //TriggerCondition 導致日誌搜索規則的條件
         //*******************************************************************************/
         //結果條件評估條件。 支援的值 - "大於值"或"小於"或"相等"
-        "sampleCountThresholdOperator": { 
-            "type": "string",
-            "defaultValue": "GreaterThan",
-            "allowedValues": [
-                "Equal",
-                "GreaterThan",
-                "LessThan"
-            ],
-            "metadata": {
-                "description": "Set the threshold operator."
-            }
-        },
-        "sampleCount": {
-            "type": "int",
-            "defaultValue": 2,
-            "metadata": {
-                "description": "Set a bad request count to fire alert."
-            }
-        },
-        //指標查詢規則的觸發條件-日誌指標觸發描述項
-        //*******************************************************************************/
-        //指標觸發器的閾值
-         //結果條件評估條件。 支援的值 - "大於值"或"小於"或"相等"
         "thresholdOperator": { 
             "type": "string",
             "defaultValue": "GreaterThan",
@@ -104,12 +81,35 @@
         },
         "threshold": {
             "type": "int",
+            "defaultValue": 2,
             "metadata": {
-                "description": "Set the threshold."   
+                "description": "Set the threshold."
+            }
+        },
+        //指標查詢規則的觸發條件-日誌指標觸發描述項
+        //*******************************************************************************/
+        //指標觸發器的閾值
+         //結果條件評估條件。 支援的值 - "大於值"或"小於"或"相等"
+        "triggerThresholdOperator": { 
+            "type": "string",
+            "defaultValue": "GreaterThan",
+            "allowedValues": [
+                "Equal",
+                "GreaterThan",
+                "LessThan"
+            ],
+            "metadata": {
+                "description": "Set the trigger threshold operator."
+            }
+        },
+        "triggerThreshold": {
+            "type": "int",
+            "metadata": {
+                "description": "Set the trigger threshold."   
             }
         },
         //指標觸發類型 - "連續"或"總計"
-        "metricTriggerType": {  
+        "triggerAlertBasedOnType": {  
             "type": "string",
             "defaultValue": "Consecutive",
             "allowedValues": [
@@ -120,11 +120,11 @@
                 "description": "Set the metric trigger type."
             }
         },
-        //評估特定列上的指標
-        "metricColumn": { 
+        //匯集基於特定的欄位
+        "aggregateOnColumn": { 
             "type": "string", 
             "metadata": {
-                "description": "Specifies the metric column name for trigger."
+                "description": "Aggregate on column."
             }
         },
         //應限制或抑制警報的時間（以分鐘表示）
@@ -186,13 +186,13 @@
                     },
                     //導致警報規則的觸發條件
                     "trigger":{
-                        "thresholdOperator": "[parameters('sampleCountThresholdOperator')]",
-                        "threshold": "[parameters('sampleCount')]",
+                        "thresholdOperator": "[parameters('thresholdOperator')]",
+                        "threshold": "[parameters('threshold')]",
                         "metricTrigger": {
-                            "thresholdOperator": "[parameters('thresholdOperator')]",
-                            "threshold": "[parameters('threshold')]",
-                            "metricTriggerType": "[parameters('metricTriggerType')]",
-                            "metricColumn": "[parameters('metricColumn')]"
+                            "thresholdOperator": "[parameters('triggerThresholdOperator')]",
+                            "threshold": "[parameters('triggerThreshold')]",
+                            "metricTriggerType": "[parameters('triggerAlertBasedOnType')]",
+                            "metricColumn": "[parameters('aggregateOnColumn')]"
                         }
                     }
                 }

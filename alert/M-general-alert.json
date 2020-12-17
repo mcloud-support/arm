@@ -76,7 +76,10 @@
             "defaultValue": 10,  
             "metadata": {
                 "description": "Time window for which data needs to be fetched for query (should be greater than or equal to frequencyInMinutes)."
-            }
+            },
+            "allowedValues": [
+                5,10,15,30,45,60,120,180,240,300,360,1440,2880
+            ]
         },
         //定義運行搜索的頻率和時間間隔
         //應計算規則條件的頻率（以分鐘表示）
@@ -85,7 +88,10 @@
             "defaultValue": 5,  
             "metadata": {
                 "description": "The frequency (in minutes) at which rule condition should be evaluated."
-            }
+            },
+            "allowedValues": [
+                5,10,15,30,45,60,120,180,240,300,360,1440
+            ]
         },
         //指標查詢規則的觸發條件-日誌指標觸發描述項
         //*******************************************************************************/
@@ -131,7 +137,7 @@
         //應限制或抑制警報的時間（以分鐘表示）
         "suppressAlertsInMinutes": {
             "type": "int",
-            "defaultValue": 30,
+            "defaultValue": 0,
             "metadata": {
                 "description": "Set an amount of time to wait before alerting again."
             }

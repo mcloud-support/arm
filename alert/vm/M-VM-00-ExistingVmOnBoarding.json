@@ -8,12 +8,16 @@
                 "description": "The name of VM."
             }
         },
-        "workspaceResourceGroupName": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().name]",
+        "osType": {
+            "type": "String",
+            "defaultValue": "Linux",
             "metadata": {
-                "description": "The Resource Group name of Log Analytics Workspace."
-            }
+                "description": "OS Type, Example: Linux / Windows"
+            },
+            "allowedValues": [
+                "Linux",
+                "Windows"
+            ]
         },
         "vmResourceGroupName": {
             "type": "string",
@@ -25,43 +29,15 @@
         "location": {
             "type": "String",
             "defaultValue": "[resourceGroup().location]",
-            "allowedValues": [
-                "australiacentral",
-                "australiaeast",
-                "australiasoutheast",
-                "brazilsouth",
-                "canadacentral",
-                "centralindia",
-                "centralus",
-                "eastasia",
-                "eastus",
-                "eastus2",
-                "francecentral",
-                "japaneast",
-                "koreacentral",
-                "northcentralus",
-                "northeurope",
-                "southafricanorth",
-                "southcentralus",
-                "southeastasia",
-                "switzerlandnorth",
-                "switzerlandwest",
-                "uksouth",
-                "ukwest",
-                "westcentralus",
-                "westeurope",
-                "westus",
-                "westus2"
-            ],
             "metadata": {
                 "description": "Specifies the virtual machine location."
             }
         },
-        "osType": {
-            "type": "String",
-            "defaultValue": "Linux",
+        "workspaceResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
             "metadata": {
-                "description": "OS Type, Example: Linux / Windows"
+                "description": "The Resource Group name of Log Analytics Workspace."
             }
         },
         "workspaceName": {
@@ -72,7 +48,6 @@
         }
     },
     "variables": {
-        // "VmName": "[split(parameters('VmResourceId'),'/')[8]]",
         "VmResourceId": "[resourceId(subscription().subscriptionId, parameters('vmResourceGroupName'), 'Microsoft.Compute/virtualMachines', parameters('VmName'))]",
         "DaExtensionName": "[if(equals(toLower(parameters('osType')), 'windows'), 'DependencyAgentWindows', 'DependencyAgentLinux')]",
         "DaExtensionType": "[if(equals(toLower(parameters('osType')), 'windows'), 'DependencyAgentWindows', 'DependencyAgentLinux')]",
@@ -129,6 +104,5 @@
                 }
             ]
         }
-    ],
-    "outputs": {}
+    ]
 }

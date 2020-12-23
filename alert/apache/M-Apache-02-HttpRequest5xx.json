@@ -22,47 +22,6 @@
                 "description": "Specifies your log analytics workspace name."
             }
         },
-        "resourceGroupName": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().name]",
-            "metadata": {
-                "description": "The Resource Group name of Log Analytics Workspace."
-        },
-        "location": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().location]",
-            "allowedValues": [
-                "australiacentral",
-                "australiaeast",
-                "australiasoutheast",
-                "brazilsouth",
-                "canadacentral",
-                "centralindia",
-                "centralus",
-                "eastasia",
-                "eastus",
-                "eastus2",
-                "francecentral",
-                "japaneast",
-                "koreacentral",
-                "northcentralus",
-                "northeurope",
-                "southafricanorth",
-                "southcentralus",
-                "southeastasia",
-                "switzerlandnorth",
-                "switzerlandwest",
-                "uksouth",
-                "ukwest",
-                "westcentralus",
-                "westeurope",
-                "westus",
-                "westus2"
-            ],
-            "metadata": {
-                "description": "Location for the alert. Must be the same location as the workspace."
-            }
-        },
         "actionGroupName": {
             "type": "string",
             "defaultValue": "ForwardToMCB-ActionGroup",
@@ -94,38 +53,40 @@
 
     },
     "variables": {
-        "vWorkspaceResourceId": "[resourceId(subscription().subscriptionId, parameters('resourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]",
-        "vActionGroupResourceId": "[resourceId(subscription().subscriptionId, parameters('resourceGroupName'), 'Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+        "resourceGroupName": "[resourceGroup().name]",
+        "location": "[resourceGroup().location]",
+        "vWorkspaceResourceId": "[resourceId(subscription().subscriptionId, variables('resourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]",
+        "vActionGroupResourceId": "[resourceId(subscription().subscriptionId, variables('resourceGroupName'), 'Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
     },
-    "resources":[ 
+    "resources": [
         {
-            "type":"Microsoft.Insights/scheduledQueryRules",
+            "type": "Microsoft.Insights/scheduledQueryRules",
             "name": "[parameters('alertRuleName')]",
             "apiVersion": "2018-04-16",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "tags": "[parameters('tags')]",
-            "properties":{
-                "description": "[concat('[INFO', parameters('alertRuleDescription'))]",
+            "properties": {
+                "description": "[concat('[INFO]', parameters('alertRuleDescription'))]",
                 "enabled": "true",
                 "source": {
                     "query": "ApacheAccess_CL | where (code_d >= 500 and code_d < 600) | summarize AggregatedValue = count() by bin(TimeGenerated, 5m), Http_Request_Status = code_d, Computer",
                     "dataSourceId": "[variables('vWorkspaceResourceId')]",
-                    "queryType":"ResultCount"
+                    "queryType": "ResultCount"
                 },
-                "schedule":{
+                "schedule": {
                     "frequencyInMinutes": 5,
                     "timeWindowInMinutes": 15
                 },
-                "action":{
+                "action": {
                     "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
                     "severity": "2",
                     "throttlingInMin": "[parameters('suppressAlertsInMinutes')]",
-                    "aznsAction":{
+                    "aznsAction": {
                         "actionGroup": "[array(variables('vActionGroupResourceId'))]",
                         "emailSubject": "[concat('[CRITICAL] ', parameters('alertRuleDescription'))]",
-                        "customWebhookPayload":"{ \"alertname\":\"#alertrulename\", \"IncludeSearchResults\":true }"
+                        "customWebhookPayload": "{ \"alertname\":\"#alertrulename\", \"IncludeSearchResults\":true }"
                     },
-                    "trigger":{
+                    "trigger": {
                         "thresholdOperator": "GreaterThan",
                         "threshold": "[parameters('greaterThanSampleCount')]",
                         "metricTrigger": {

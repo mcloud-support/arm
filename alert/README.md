@@ -1,15 +1,18 @@
-# 啟用監控偵測功能與 Alert 告警
-> 以 VM 為例，VM建立完成，使用 ExistingVmOnboardingTemplate.json 納管指定的 VM 啟用 Agent 監控，可執行Alert腳本
+# 設定用戶端納管啟用 VM 監控與監控告警
+> 準備工作：需先備妥 ForwardToMCB-ActionGroup，可以參考前述說明 [由此處進入](https://github.com/mcloud-support/arm/tree/main/workspace/README.md)</p>
+> 後續應用：自訂 Azure Alert 設定時，可指名加入 ForwardToMCB-ActionGroup 為通知對象，即可整合傳送訊息到 MCB Portal 事件中心</p>
+> 此處自動化建立告警的腳本中，觸發與監測屬性預設值為一般用途，目的是快速自動部署告警</p>
+> <font color=red><h3>強烈建議</h3></font> 必須依據實際案場需要來調整各項監測屬性值，使用 Azure Portal Alert Rules 管理功能即可直接調整。
+---
+## 納管啟用 VM 監控偵測功能
+> 執行先決條件是 VM 已經存在。
+* [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2Fvm%2FM-VM-00-ExistingVmOnBoarding.json)
+* 自動部署下列資源：
+* 輸入指定的 VM name，自動部署 Azure OmsAgent 並啟動 Workspace 診斷監測
 
-## 泛用型告警規則
+## 建立監控告警，若首次使用請選擇 [詳細說明](./CREATEALERT.md)
 * [![Deploy to Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmcloud-support%2Farm%2Fmain%2Falert%2FM-general-alert.json)
-* 需先備妥，至 MCB Monitor Portal 複製要建立告警的規則查詢字串
+* 需先備妥修正後的查詢字串，請先至依據[詳細說明](./CREATEALERT.md)步驟操作
 * 自動部署下列資源：
     * 建立 Azure Alert Rule
     * 配置告警觸發時傳送訊息到指定的 ActionGroup
-## VM [由此處進入](https://github.com/mcloud-support/arm/tree/main/alert/vm/README.md)
----
-## Apache 應用程式 [由此處進入](https://github.com/mcloud-support/arm/tree/main/alert/apache/README.md)
----
-## SQL 資料庫 [由此處進入](https://github.com/mcloud-support/arm/tree/main/alert/sqlserver/README.md)
----

@@ -112,7 +112,8 @@
                         "defaultMessageTimeToLive": "P14DT0H0M0S",
                         "lockDuration": "PT5M",
                         "duplicateDetectionHistoryTimeWindow": "PT10M",
-                        "autoDeleteOnIdle": "P14DT0H0M0S",
+                        //20210114 Cancel the auto delete queue on ible setting
+                        // "autoDeleteOnIdle": "P14DT0H0M0S",
                         "enableExpress": "[parameters('enableExpress')]",
                         "requiresDuplicateDetection": "[parameters('requiresDuplicateDetection')]",
                         "deadLetteringOnMessageExpiration": "[parameters('deadLetteringOnMessageExpiration')]",
@@ -133,7 +134,8 @@
                         "defaultMessageTimeToLive": "P14DT0H0M0S",
                         "lockDuration": "PT5M",
                         "duplicateDetectionHistoryTimeWindow": "PT10M",
-                        "autoDeleteOnIdle": "P14DT0H0M0S",
+                        //20210114 Cancel the auto delete queue on ible setting
+                        // "autoDeleteOnIdle": "P14DT0H0M0S",
                         "enableExpress": "[parameters('enableExpress')]",
                         "requiresDuplicateDetection": "[parameters('requiresDuplicateDetection')]",
                         "deadLetteringOnMessageExpiration": "[parameters('deadLetteringOnMessageExpiration')]",
